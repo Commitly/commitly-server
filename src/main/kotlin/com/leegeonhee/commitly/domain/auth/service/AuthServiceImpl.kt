@@ -4,10 +4,9 @@ import com.leegeonhee.commitly.domain.auth.domain.internal.github.GithubOAuth2Cl
 import com.leegeonhee.commitly.domain.auth.domain.model.GithubProperties
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthAccessTokenRequest
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
+import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
+import com.leegeonhee.commitly.gloabl.exception.CustomException
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
@@ -17,9 +16,18 @@ import org.springframework.web.client.getForObject
 class AuthServiceImpl(
     private val githubOAuth2Client: GithubOAuth2Client
 ) : AuthService {
-    override fun getAccessToken(code: String): OAuthTokensResponse {
-        return githubOAuth2Client.getAccessToken(code)?: OAuthTokensResponse(
-            accessToken = "왜안됨?",
+    override fun githubOAuth2SignIn(code: String): ResponseEntity<GithubUserInfo> {
+        val githubAccessToken = githubOAuth2Client.getAccessToken(code) ?: throw CustomException(
+            status = HttpStatus.UNAUTHORIZED,
+            message = "너가 잘못했음"
         )
+        println(githubAccessToken)
+        val githubUserInfo = githubOAuth2Client.getUserInfo(
+            githubAccessToken.accessToken ?: throw CustomException(
+                status = HttpStatus.UNAUTHORIZED,
+                message = "이거 또한 너가 잘못함"
+            )
+        )
+        return githubUserInfo
     }
 }

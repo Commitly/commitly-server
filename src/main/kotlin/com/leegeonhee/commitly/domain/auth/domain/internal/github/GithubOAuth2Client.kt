@@ -3,18 +3,12 @@ package com.leegeonhee.commitly.domain.auth.domain.internal.github
 import com.leegeonhee.commitly.domain.auth.domain.model.GithubProperties
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthAccessTokenRequest
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
+import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
 import com.leegeonhee.commitly.gloabl.exception.CustomException
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.*
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestClient
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.body
-import org.springframework.web.client.toEntity
+import org.springframework.web.client.*
 
 @Component
 class GithubOAuth2Client(
@@ -34,6 +28,23 @@ class GithubOAuth2Client(
         return  restTemplate.postForEntity(
             "https://github.com/login/oauth/access_token",request,OAuthTokensResponse::class.java
         ).body
+    }
 
+    fun getUserInfo(token: String): ResponseEntity<GithubUserInfo> {
+        // 헤더 설정
+        val headers = HttpHeaders()
+        headers.set("Authorization", "Bearer $token")
+
+        // HttpEntity 생성 (헤더만 포함)
+        val entity = HttpEntity<String>(headers)
+
+        // GET 요청 보내기
+        val response = restTemplate.exchange(
+            "https://api.github.com/user",
+            HttpMethod.GET,
+            entity,
+            GithubUserInfo::class.java
+        )
+        return response
     }
 }

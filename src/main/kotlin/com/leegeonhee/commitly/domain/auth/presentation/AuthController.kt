@@ -1,13 +1,12 @@
 package com.leegeonhee.commitly.domain.auth.presentation
 
-import com.leegeonhee.commitly.domain.auth.domain.model.GithubProperties
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
+import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
 import com.leegeonhee.commitly.domain.auth.service.AuthService
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.client.RestTemplate
 
 
 @RestController
@@ -16,8 +15,8 @@ class AuthController(
 ) {
 
     @GetMapping("/login/oauth2/code/github")
-    fun getAccessToken(@RequestParam code: String): OAuthTokensResponse {
-        return authService.getAccessToken(code)
+    fun githubOAuth2SignIn(@RequestParam code: String): ResponseEntity<GithubUserInfo> {
+        return authService.githubOAuth2SignIn(code)
     }
 
 

@@ -1,9 +1,10 @@
 package com.leegeonhee.commitly.domain.auth.service
 
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
-import org.springframework.stereotype.Service
+import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
+import org.springframework.http.ResponseEntity
 
 
 interface AuthService {
-    fun getAccessToken(code: String): OAuthTokensResponse
+    fun githubOAuth2SignIn(code: String): ResponseEntity<GithubUserInfo>
 }
