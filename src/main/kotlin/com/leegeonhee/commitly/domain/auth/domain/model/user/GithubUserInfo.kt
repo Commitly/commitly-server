@@ -18,7 +18,7 @@ data class GithubUserInfo(
     val gravatar_id: String?,
     val hireable: Any?,
     val html_url: String?,
-    val id: Int?,
+    val id: Long?,
     val location: String?,
     val login: String?,
     val name: String?,

@@ -1,3 +1,6 @@
+github:
+  token: ${GITHUB_PERSONAL_ACCESS_TOKEN}
+  api-url: https://api.github.com/graphql
 spring:
   security:
     oauth2:
@@ -6,3 +9,19 @@ spring:
           github:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/commitly
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show_sql: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
