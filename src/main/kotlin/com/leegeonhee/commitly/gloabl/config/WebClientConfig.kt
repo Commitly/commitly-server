@@ -12,6 +12,9 @@ class WebClientConfig {
     @Value("\${github.token}")
     private lateinit var token: String
 
+
+    @Value("\${gpt.key}")
+    private lateinit var key: String
     @Bean
     fun webClient(): WebClient {
         return WebClient.builder()
@@ -20,4 +23,14 @@ class WebClientConfig {
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
     }
+
+    @Bean(name = ["openaiClient"])
+    fun gptClient(): WebClient {
+        return WebClient.builder()
+            .baseUrl("https://api.openai.com/v1/chat/completions")
+            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer $key")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build()
+    }
+
 }

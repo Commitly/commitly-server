@@ -1,6 +1,11 @@
 github:
   token: ${GITHUB_PERSONAL_ACCESS_TOKEN}
   api-url: https://api.github.com/graphql
+
+gpt:
+  key: ${GPT_KEY}
+  model: GPT-4o-mini
+
 spring:
   security:
     oauth2:
