@@ -17,8 +17,17 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
 }
+val springCloudVersion by extra("2023.0.2")
+val springAiVersion by extra("1.0.0-M3")
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+        mavenBom("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    }
+}
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -26,6 +35,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
+    implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter")
     //
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
