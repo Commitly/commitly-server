@@ -56,10 +56,9 @@ class GitHubService(
                 }
             )
         }
-
+        println("ㅇㅇㅇ: $username")
         val fromDate = date.atStartOfDay()
         val toDate = date.atTime(LocalTime.MAX)
-
         val query = """
         query {
           user(login: "$username") {
@@ -152,7 +151,7 @@ class GitHubService(
         return if (commitInfos.isEmpty()) {
             BaseResponse(
                 status = 404,
-                message = "커밋을 찾을 수 없습니다.",
+                message = "커밋을 찾을 수 없습니다ddddd.",
                 data = emptyList()
             )
         } else {
@@ -165,7 +164,7 @@ class GitHubService(
     }
 
 
-    suspend fun generateMemoirWithGpt(name: String, date: LocalDate): BaseResponse<GptResponse> {
+    suspend fun generateMemoirWithGpt(name: String, date: LocalDate): BaseResponse<String> {
         val userCommit = getCommitMessages(name, date)
 
         if (userCommit.data.isNullOrEmpty()) {
@@ -175,28 +174,13 @@ class GitHubService(
                 data = null
             )
         }
-
-        // 커밋 메시지들을 보기 좋게 포매팅
-//        val commitSummary = userCommit.data.joinToString("\n") { commit ->
-//            "- Repository: ${commit.repositoryName}\n  Message: ${commit.message}\n  Date: ${commit.committedDate}"
-//        }
-//
-//        return try {
-//            val gptResponse = gptService.generateMemoir(commitSummary).awaitSingle()
-//            BaseResponse(
-//                status = 200,
-//                message = "굿",
-//                data = gptResponse
-//            )
-//        } catch (e: Exception) {
-//            BaseResponse(
-//                status = 500,
-//                message = "GPT 응답을 받을 수 없습니다: ${e.message}",
-//                data = null
-//            )
-//        }
+        println(userCommit.data.toString())
+        return BaseResponse(
+            status = 200,
+            message = "잘옴",
+            data = gptService.askToGptRequest(userCommit.data.toString())
+        )
     }
-
 
 
 }

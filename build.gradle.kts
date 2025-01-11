@@ -21,10 +21,14 @@ repositories {
 }
 val springCloudVersion by extra("2023.0.2")
 val springAiVersion by extra("1.0.0-M3")
+repositories {
+    mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
 
+}
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
         mavenBom("org.springframework.ai:spring-ai-bom:${springAiVersion}")
     }
 }
@@ -36,6 +40,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
     implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter")
+    implementation (platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT"))
     //
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")

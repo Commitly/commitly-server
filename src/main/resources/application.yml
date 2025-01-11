@@ -14,6 +14,9 @@ spring:
           github:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
+  ai:
+    openai:
+      api-key: ${GPT_KEY}
 
   datasource:
     url: jdbc:mysql://localhost:3306/commitly

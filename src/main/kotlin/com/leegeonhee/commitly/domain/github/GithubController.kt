@@ -19,12 +19,12 @@ class GitHubController(private val gitHubService: GitHubService) {
         return gitHubService.getCommitMessages(username, targetDate)
     }
 
-//    @GetMapping("/commits/{userName}/fromDB")
-//    fun getFromDB(
-//        @PathVariable userName: String,
-//        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
-//    )  = gitHubService.getFromDB(userName, date)
-//
+    @GetMapping("/commits/{userName}/fromDB")
+    fun getFromDB(
+        @PathVariable userName: String,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
+    )  = gitHubService.getFromDB(userName, date)
+
 //
 //
 
