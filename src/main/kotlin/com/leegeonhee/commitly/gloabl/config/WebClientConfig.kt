@@ -24,13 +24,4 @@ class WebClientConfig {
             .build()
     }
 
-    @Bean(name = ["openaiClient"])
-    fun gptClient(): WebClient {
-        return WebClient.builder()
-            .baseUrl("https://api.openai.com/v1/chat/completions")
-            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer $key")
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .build()
-    }
-
 }
