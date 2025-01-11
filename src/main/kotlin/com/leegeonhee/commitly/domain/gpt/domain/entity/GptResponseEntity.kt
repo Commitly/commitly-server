@@ -3,6 +3,7 @@ package com.leegeonhee.commitly.domain.gpt.domain.entity
 import jakarta.persistence.*
 
 @Entity
+@Table(name = "gpt_response")
 class GptResponseEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

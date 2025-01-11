@@ -2,17 +2,17 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import GitHubResponse
-import com.fasterxml.jackson.databind.ser.Serializers.Base
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepo
 import com.leegeonhee.commitly.domain.gpt.GptService
-import com.leegeonhee.commitly.domain.gpt.domain.dto.GptResponse
+import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
+import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
-import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import reactor.core.publisher.Mono
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -21,7 +21,8 @@ import java.time.format.DateTimeFormatter
 class GitHubService(
     private val webClient: WebClient,
     private val githubRepo: GithubRepo,
-    private val gptService: GptService
+    private val gptService: GptService,
+    private val gptResponseRepository: GptResponseRepository
 ) {
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
         val commit = githubRepo.findByUserNameAndDay(name, date)
@@ -174,11 +175,20 @@ class GitHubService(
                 data = null
             )
         }
+        val response = gptService.askToGptRequest(userCommit.data.toString())
+        withContext(Dispatchers.IO) {
+            gptResponseRepository.save(
+                GptResponseEntity(
+                    user = name,
+                    response = response
+                )
+            )
+        }
         println(userCommit.data.toString())
         return BaseResponse(
             status = 200,
             message = "잘옴",
-            data = gptService.askToGptRequest(userCommit.data.toString())
+            data = response
         )
     }
 
