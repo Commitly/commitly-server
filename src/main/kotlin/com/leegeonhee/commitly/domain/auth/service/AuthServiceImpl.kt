@@ -8,6 +8,7 @@ import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
 import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
 import com.leegeonhee.commitly.domain.auth.domain.model.user.git.GithubCommitResponse
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
+import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.exception.CustomException
 import org.springframework.http.*
 import org.springframework.stereotype.Service
@@ -20,7 +21,7 @@ class AuthServiceImpl(
     private val userRepository: UserRepository,
     private val githubOAuth2Client: GithubOAuth2Client
 ) : AuthService {
-    override fun githubOAuth2SignIn(code: String): GithubCommitResponse? {
+    override fun githubOAuth2SignIn(code: String): BaseResponse<String> {
         val githubAccessToken = githubOAuth2Client.getAccessToken(code) ?: throw CustomException(
             status = HttpStatus.UNAUTHORIZED,
             message = "너가 잘못했음"
@@ -38,18 +39,18 @@ class AuthServiceImpl(
             message = "GitHub 사용자 ID가 없습니다."
         )
         val users = userRepository.findByUserId(userId)
-        val user = users.firstOrNull() ?: userRepository.save(
+        users.firstOrNull() ?: userRepository.save(
            User(
                userId = githubUserInfo.id,
                login = githubUserInfo.login?: throw CustomException(HttpStatus.BAD_REQUEST, "아마 오류 뜰일 없을듯"),
-               name = githubUserInfo.name?: throw CustomException(HttpStatus.BAD_REQUEST, "아마 오류 뜰일 없을듯")
+               name = githubUserInfo.name?: throw CustomException(HttpStatus.BAD_REQUEST, "아마 오류 뜰일 없을듯"),
+               responses = mutableListOf(),
            )
         )
-        println(user.login)
-        val userCommits = githubOAuth2Client.myGitLog(
-            token = githubAccessToken.accessToken,
-            user = user.login
+        return BaseResponse(
+            status = 200,
+            message = "로그인 되었음",
+            data = "토큰이 들어갈곳"
         )
-        return userCommits
     }
 }

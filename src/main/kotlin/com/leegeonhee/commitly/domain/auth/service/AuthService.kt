@@ -4,9 +4,10 @@ import com.leegeonhee.commitly.domain.auth.domain.entity.User
 import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
 import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
 import com.leegeonhee.commitly.domain.auth.domain.model.user.git.GithubCommitResponse
+import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import org.springframework.http.ResponseEntity
 
 
 interface AuthService {
-    fun githubOAuth2SignIn(code: String): GithubCommitResponse?
+    fun githubOAuth2SignIn(code: String): BaseResponse<String>
 }
