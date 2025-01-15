@@ -2,7 +2,7 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import GitHubResponse
-import com.leegeonhee.commitly.domain.auth.domain.entity.User
+import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepo
@@ -191,7 +191,7 @@ class GitHubService(
         withContext(Dispatchers.IO) {
             gptResponseRepository.save(
                 GptResponseEntity(
-                    user = User(
+                    user = UserEntity(
                         userId = userInfo.userId,
                         login = userInfo.login,
                         name = userInfo.name,

@@ -31,5 +31,8 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-
-
+jwt:
+  secret: ${JWT_KEY} # Put your jwt secret
+  expired:
+    access: 3_600_000
+    refresh: 300_000_000

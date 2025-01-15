@@ -1,13 +1,9 @@
 package com.leegeonhee.commitly.domain.auth.service
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.User
-import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
-import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
-import com.leegeonhee.commitly.domain.auth.domain.model.user.git.GithubCommitResponse
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
-import org.springframework.http.ResponseEntity
+import com.leegeonhee.commitly.gloabl.jwt.JwtInfo
 
 
 interface AuthService {
-    fun githubOAuth2SignIn(code: String): BaseResponse<String>
+    fun githubOAuth2SignIn(code: String): BaseResponse<JwtInfo>
 }

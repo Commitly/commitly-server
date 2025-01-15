@@ -1,11 +1,6 @@
 package com.leegeonhee.commitly.domain.auth.presentation
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.User
-import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
-import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
-import com.leegeonhee.commitly.domain.auth.domain.model.user.git.GithubCommitResponse
 import com.leegeonhee.commitly.domain.auth.service.AuthService
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController

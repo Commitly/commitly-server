@@ -1,9 +1,9 @@
 package com.leegeonhee.commitly.domain.auth.domain.repository
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.User
+import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface UserRepository : JpaRepository<User, Long> {
-    fun findByUserId(userId:Long):List<User>
-    fun findByLogin(username:String):User
+interface UserRepository : JpaRepository<UserEntity, Long> {
+    fun findByUserId(userId:Long):List<UserEntity>
+    fun findByLogin(username:String):UserEntity
 }
