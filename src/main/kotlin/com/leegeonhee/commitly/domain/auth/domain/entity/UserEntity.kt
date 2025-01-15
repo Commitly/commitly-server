@@ -9,7 +9,7 @@ class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null, // ID (PK)
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     val userId: Long,
     @Column(nullable = false)
     val login: String,
@@ -17,6 +17,6 @@ class UserEntity(
     var name: String, // Email,
     @Column(nullable = false)
     val role: UserRole = UserRole.ROLE_USER,
-    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     val responses: List<GptResponseEntity> = mutableListOf()
 )

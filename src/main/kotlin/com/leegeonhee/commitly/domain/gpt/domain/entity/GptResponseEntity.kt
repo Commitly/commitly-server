@@ -10,13 +10,11 @@ class GptResponseEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST]) // CascadeType 설정
+    @ManyToOne(fetch = FetchType.LAZY) // CascadeType 설정
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserEntity,
     @Column(nullable = false)
     val response: String,
 
     @Column(nullable = false)
-    val date: String,
-
-    )
+    val date: String, )

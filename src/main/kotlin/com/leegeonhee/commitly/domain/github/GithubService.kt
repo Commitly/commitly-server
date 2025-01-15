@@ -10,9 +10,9 @@ import com.leegeonhee.commitly.domain.gpt.GptService
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
+import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
@@ -27,7 +27,7 @@ class GitHubService(
     private val gptService: GptService,
     private val userRepository: UserRepository,
     private val gptResponseRepository: GptResponseRepository,
-    private val dataSourceScriptDatabaseInitializer: SqlDataSourceScriptDatabaseInitializer
+    private val jwtUtils: JwtUtils
 ) {
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
         val commit = githubRepo.findByUserNameAndDay(name, date)
@@ -46,7 +46,10 @@ class GitHubService(
         }
     }
 
-    suspend fun getCommitMessages(username: String, date: LocalDate): BaseResponse<List<CommitInfo>> {
+    suspend fun getCommitMessages(userId: Long,date: LocalDate): BaseResponse<List<CommitInfo>> {
+        val username = withContext(Dispatchers.IO) {
+            userRepository.findById(userId)
+        }.get().login
         val duplicationChecker = getFromDB(username, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {
             println("좋은거 찾음")
@@ -173,8 +176,12 @@ class GitHubService(
     }
 
 
-    suspend fun generateMemoirWithGpt(login: String, date: LocalDate): BaseResponse<String> {
-        val userCommit = getCommitMessages(login, date)
+    suspend fun generateMemoirWithGpt(userId: Long, date: LocalDate): BaseResponse<String> {
+        println("adfjkladjkldkajlfakdldsf0d00f0ads0ds-fdsa-fs-fadsfsad :      $userId")
+        val login = withContext(Dispatchers.IO) {
+            userRepository.findById(userId).get().login
+        }
+        val userCommit = getCommitMessages(userId, date)
         val userInfo = withContext(Dispatchers.IO) {
             userRepository.findByLogin(login)
         }
@@ -189,20 +196,21 @@ class GitHubService(
         println("범인찾기---------------${userInfo.login}")
 
         val response = gptService.askToGptRequest(userCommit.data.toString())
+        println("gpt 한테 왜 안물어봐")
+
         withContext(Dispatchers.IO) {
+            val user = userRepository.findById(userId).orElseThrow {
+                IllegalStateException("User not found with id: $userId")
+            }
             gptResponseRepository.save(
                 GptResponseEntity(
-                    user = UserEntity(
-                        userId = userInfo.userId,
-                        login = userInfo.login,
-                        name = userInfo.name,
-                    ),
+                    user = user,
                     response = response,
                     date = date.toString()
                 )
             )
         }
-        println(userCommit.data.toString())
+        println(response)
         return BaseResponse(
             status = 200,
             message = "잘옴",

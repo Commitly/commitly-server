@@ -2,6 +2,7 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
+import com.leegeonhee.commitly.gloabl.common.annotation.GetAuthenticatedId
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -10,13 +11,13 @@ import java.time.LocalDate
 @RequestMapping("/github")
 class GitHubController(private val gitHubService: GitHubService) {
 
-    @GetMapping("/commits/{username}/messages")
+    @GetMapping("/commits/messages")
     suspend fun getCommitMessages(
-        @PathVariable username: String,
+//        @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
     ): BaseResponse<List<CommitInfo>> {
         val targetDate = LocalDate.parse(date)
-        return gitHubService.getCommitMessages(username, targetDate)
+        return gitHubService.getCommitMessages(1, targetDate)
     }
 
     @GetMapping("/commits/{userName}/fromDB")
@@ -28,12 +29,12 @@ class GitHubController(private val gitHubService: GitHubService) {
 //
 //
 
-    @GetMapping("/make/{username}")
+    @GetMapping("/make")
     suspend fun getMakeCommitMessages(
-        @PathVariable username: String,
+        @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
     ) = gitHubService.generateMemoirWithGpt(
-        login = username,
+        userId = userId,
         date = LocalDate.parse(date)
     )
 }

@@ -29,7 +29,7 @@ class JwtUtils(
     )
     fun getUsername(token: String): String {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload.get(
-            "email",
+            "login",
             String::class.java
         )
     }
@@ -72,10 +72,14 @@ class JwtUtils(
     }
 
     fun getAuthentication(token: String): Authentication {
-        val userDetails: UserDetails = userDetailsService.loadUserByUsername(getUsername(getToken(token)))
+        val tokenWithoutBearer = getToken(token)
+        println("Getting authentication for token: $tokenWithoutBearer")
+        val username = getUsername(tokenWithoutBearer)
+        println("Username from token: $username")
+        val userDetails = userDetailsService.loadUserByUsername(username)
+        println("UserDetails loaded: ${userDetails.username}")
         return UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
     }
-
     fun refreshToken(user: UserEntity): String {
         return "Bearer " + createToken(
             user = user,
@@ -86,9 +90,10 @@ class JwtUtils(
     private fun createToken(user: UserEntity, tokenExpired: Long): String {
         val now: Long = Date().time
         return Jwts.builder()
+            .subject(user.login)  // subject 추가
             .claim("id", user.id)
             .claim("role", user.role)
-            .claim("email", user.login)
+                .claim("login", user.login)
             .issuedAt(Date(now))
             .expiration(Date(now + tokenExpired))
             .signWith(secretKey)

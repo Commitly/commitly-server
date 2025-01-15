@@ -21,7 +21,6 @@ class AuthServiceImpl(
             status = HttpStatus.UNAUTHORIZED,
             message = "너가 잘못했음"
         )
-
         println(githubAccessToken)
         val githubUserInfo = githubOAuth2Client.getUserInfo(
             githubAccessToken.accessToken ?: throw CustomException(
@@ -43,10 +42,13 @@ class AuthServiceImpl(
            )
         )
         val nowUser =  userRepository.findByUserId(userId)
+        val jwt = jwtUtils.generate(nowUser.first())
+        println(jwt)
         return BaseResponse(
             status = 200,
             message = "로그인 되었음",
-            data = jwtUtils.generate(nowUser.first())
+            data = jwt
         )
+
     }
 }

@@ -25,7 +25,7 @@ class JwtUserDetails(
     }
 
     override fun getUsername(): String {
-        return user.name
+        return user.login
     }
 
     override fun isAccountNonExpired(): Boolean {
