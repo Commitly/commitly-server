@@ -137,16 +137,19 @@ class GitHubService(
                 )
             } ?: emptyList() // 커밋이 없으면 빈 리스트로 처리
         }
+
         if (commitInfos.isNotEmpty()) {
-            commitInfos.forEach {
-                githubRepo.save(
-                    CommitInfoEntity(
-                        repositoryName = it.repositoryName,
-                        userName = username,
-                        message = it.message,
-                        committedDate = it.committedDate
+            withContext(Dispatchers.IO){
+                commitInfos.forEach {
+                    githubRepo.save(
+                        CommitInfoEntity(
+                            repositoryName = it.repositoryName,
+                            userName = username,
+                            message = it.message,
+                            committedDate = it.committedDate
+                        )
                     )
-                )
+                }
             }
         }
         return if (commitInfos.isEmpty()) {
