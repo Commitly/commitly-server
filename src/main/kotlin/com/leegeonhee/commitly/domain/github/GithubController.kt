@@ -33,7 +33,7 @@ class GitHubController(private val gitHubService: GitHubService) {
         @PathVariable username: String,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
     ) = gitHubService.generateMemoirWithGpt(
-        name = username,
+        login = username,
         date = LocalDate.parse(date)
     )
 }

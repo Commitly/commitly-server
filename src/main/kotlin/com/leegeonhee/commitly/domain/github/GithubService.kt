@@ -2,6 +2,8 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import GitHubResponse
+import com.leegeonhee.commitly.domain.auth.domain.entity.User
+import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepo
 import com.leegeonhee.commitly.domain.gpt.GptService
@@ -10,6 +12,7 @@ import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
@@ -22,7 +25,9 @@ class GitHubService(
     private val webClient: WebClient,
     private val githubRepo: GithubRepo,
     private val gptService: GptService,
-    private val gptResponseRepository: GptResponseRepository
+    private val userRepository: UserRepository,
+    private val gptResponseRepository: GptResponseRepository,
+    private val dataSourceScriptDatabaseInitializer: SqlDataSourceScriptDatabaseInitializer
 ) {
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
         val commit = githubRepo.findByUserNameAndDay(name, date)
@@ -168,9 +173,12 @@ class GitHubService(
     }
 
 
-    suspend fun generateMemoirWithGpt(name: String, date: LocalDate): BaseResponse<String> {
-        val userCommit = getCommitMessages(name, date)
-
+    suspend fun generateMemoirWithGpt(login: String, date: LocalDate): BaseResponse<String> {
+        val userCommit = getCommitMessages(login, date)
+        val userInfo = withContext(Dispatchers.IO) {
+            userRepository.findByLogin(login)
+        }
+        println("adjadjadjkfakjdfkjd---------------${userInfo.login}")
         if (userCommit.data.isNullOrEmpty()) {
             return BaseResponse(
                 status = 404,
@@ -183,8 +191,13 @@ class GitHubService(
         withContext(Dispatchers.IO) {
             gptResponseRepository.save(
                 GptResponseEntity(
-                    user = name,
-                    response = response
+                    user = User(
+                        userId = userInfo.userId,
+                        login = userInfo.login,
+                        name = userInfo.name,
+                    ),
+                    response = response,
+                    date = date.toString()
                 )
             )
         }
