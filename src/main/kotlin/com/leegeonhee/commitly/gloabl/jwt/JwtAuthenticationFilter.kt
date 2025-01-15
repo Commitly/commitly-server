@@ -28,15 +28,16 @@ class JwtAuthenticationFilter(
             return
         }
 
-        if (path.startsWith("/auth") || path.startsWith("/mail")) {
+        if (path.startsWith("/auth") || path.startsWith("/github")) {
             filterChain.doFilter(request, response)
             return
         }
-        if (path.startsWith("/login")
+        if (path.startsWith("/login/")
         ) {
             filterChain.doFilter(request, response)
             return
         }
+
 
         if (token.isNullOrEmpty() || !token.startsWith("Bearer ")) {
             setErrorResponse(response, JwtErrorCode.JWT_EMPTY_EXCEPTION)

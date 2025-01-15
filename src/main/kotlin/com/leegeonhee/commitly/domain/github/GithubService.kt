@@ -186,6 +186,7 @@ class GitHubService(
                 data = null
             )
         }
+        println("범인찾기---------------${userInfo.login}")
 
         val response = gptService.askToGptRequest(userCommit.data.toString())
         withContext(Dispatchers.IO) {

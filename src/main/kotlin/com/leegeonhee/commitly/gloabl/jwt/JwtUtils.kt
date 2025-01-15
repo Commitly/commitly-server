@@ -24,10 +24,9 @@ class JwtUtils(
 ) {
 
     private val secretKey: SecretKey = SecretKeySpec(
-        this.jwtProperties.secretKey.toByteArray(StandardCharsets.UTF_8),
-        Jwts.SIG.HS256.key().build().algorithm
+        jwtProperties.secretKey.toByteArray(StandardCharsets.UTF_8),
+        "HmacSHA256"
     )
-
     fun getUsername(token: String): String {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload.get(
             "email",
@@ -78,7 +77,6 @@ class JwtUtils(
     }
 
     fun refreshToken(user: UserEntity): String {
-
         return "Bearer " + createToken(
             user = user,
             tokenExpired = jwtProperties.accessExpired
@@ -90,6 +88,7 @@ class JwtUtils(
         return Jwts.builder()
             .claim("id", user.id)
             .claim("role", user.role)
+            .claim("email", user.login)
             .issuedAt(Date(now))
             .expiration(Date(now + tokenExpired))
             .signWith(secretKey)

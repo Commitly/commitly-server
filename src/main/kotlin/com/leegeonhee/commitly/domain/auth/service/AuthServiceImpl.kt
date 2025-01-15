@@ -42,11 +42,11 @@ class AuthServiceImpl(
                responses = mutableListOf(),
            )
         )
-
+        val nowUser =  userRepository.findByUserId(userId)
         return BaseResponse(
             status = 200,
             message = "로그인 되었음",
-            data = jwtUtils.generate(users.first())
+            data = jwtUtils.generate(nowUser.first())
         )
     }
 }
