@@ -175,6 +175,7 @@ class GitHubService(
                 data = null
             )
         }
+
         val response = gptService.askToGptRequest(userCommit.data.toString())
         withContext(Dispatchers.IO) {
             gptResponseRepository.save(

@@ -21,7 +21,7 @@ class GptService(
     private val gptResponseRepository: GptResponseRepository
 ) {
     private val requestModel = OpenAiChatOptions.builder().withModel(OpenAiApi.ChatModel.GPT_4_O_MINI).build()
-    fun askToGptRequest(message: String): String {
+    suspend fun askToGptRequest(message: String): String {
         val promptTemplate = PromptTemplate(
             """
     너는 아래 커밋 메시지 리스트를 보고 3줄 이내로 끝나는 이날의 회고록을 적어야해. 
@@ -32,8 +32,6 @@ class GptService(
         ${message}
 """
         )
-
-
         val prompt = promptTemplate.create(mapOf("message" to message), requestModel)
         val result = openAiChatModel.call(prompt).result.output.content
         return result ?: "안왔음 ㅎㅎ"
