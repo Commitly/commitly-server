@@ -49,7 +49,6 @@ class SecurityConfig (
                     .requestMatchers( "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/login/oauth2/code/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/github/**").permitAll()
                     .anyRequest().authenticated()
             }
 
