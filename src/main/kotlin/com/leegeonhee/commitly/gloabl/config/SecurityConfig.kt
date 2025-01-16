@@ -55,7 +55,7 @@ class SecurityConfig (
             .addFilterBefore(JwtAuthenticationFilter(jwtUtils, objectMapper), UsernamePasswordAuthenticationFilter::class.java)
 
             .exceptionHandling {
-                it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.NOT_FOUND))
+                it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
 
             .build()

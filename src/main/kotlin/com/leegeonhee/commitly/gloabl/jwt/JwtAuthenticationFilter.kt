@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
-
 class JwtAuthenticationFilter(
     private val jwtUtils: JwtUtils,
     private val objectMapper: ObjectMapper
@@ -20,50 +19,69 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-
         val token: String? = request.getHeader("Authorization")
         val path: String = request.servletPath
-        if (path.startsWith("/swagger") || path.startsWith("/v3/api-docs")) {
-            filterChain.doFilter(request, response)
-            return
-        }
 
-        if (path.startsWith("/auth")) {
-            filterChain.doFilter(request, response)
-            return
-        }
         if (path.startsWith("/login/")
         ) {
             filterChain.doFilter(request, response)
             return
         }
-
+        if (path.startsWith("/swagger-ui/index.html#/")
+        ) {
+            filterChain.doFilter(request, response)
+            return
+        }
 
         if (token.isNullOrEmpty() || !token.startsWith("Bearer ")) {
+            println("Token is empty or does not start with Bearer.")
             setErrorResponse(response, JwtErrorCode.JWT_EMPTY_EXCEPTION)
         } else {
-            when (jwtUtils.checkTokenInfo(jwtUtils.getToken(token))) {
-                JwtErrorType.OK -> {
-                    SecurityContextHolder.getContext().authentication = jwtUtils.getAuthentication(token)
-                    doFilter(request, response, filterChain)
+            println("Token received: $token")
+            try {
+                when (jwtUtils.checkTokenInfo(jwtUtils.getToken(token))) {
+                    JwtErrorType.OK -> {
+                        // 인증된 사용자를 SecurityContext에 설정
+                        val authentication = jwtUtils.getAuthentication(token)
+                        SecurityContextHolder.getContext().authentication = authentication
+                        println("SecurityContextHolder authentication after setting: ${SecurityContextHolder.getContext().authentication}")
+
+                        doFilter(request, response, filterChain)
+                        println("Authentication successful: $authentication")
+
+                    }
+
+                    JwtErrorType.ExpiredJwtException -> {
+                        println("Token has expired.")
+                        setErrorResponse(response, JwtErrorCode.JWT_TOKEN_EXPIRED)
+                    }
+                    JwtErrorType.SignatureException -> {
+                        println("Token has signature error.")
+                        setErrorResponse(response, JwtErrorCode.JWT_TOKEN_SIGNATURE_ERROR)
+                    }
+                    JwtErrorType.MalformedJwtException -> {
+                        println("Token is malformed.")
+                        setErrorResponse(response, JwtErrorCode.JWT_TOKEN_ERROR)
+                    }
+                    JwtErrorType.UnsupportedJwtException -> {
+                        println("Token is unsupported.")
+                        setErrorResponse(response, JwtErrorCode.JWT_TOKEN_UNSUPPORTED_ERROR)
+                    }
+                    JwtErrorType.IllegalArgumentException -> {
+                        println("Token argument is invalid.")
+                        setErrorResponse(response, JwtErrorCode.JWT_TOKEN_ILL_EXCEPTION)
+                    }
+                    JwtErrorType.UNKNOWN_EXCEPTION -> {
+                        println("Unknown token error.")
+                        setErrorResponse(response, JwtErrorCode.JWT_UNKNOWN_EXCEPTION)
+                    }
                 }
-
-                JwtErrorType.ExpiredJwtException -> setErrorResponse(response, JwtErrorCode.JWT_TOKEN_EXPIRED)
-                JwtErrorType.SignatureException -> setErrorResponse(response, JwtErrorCode.JWT_TOKEN_SIGNATURE_ERROR)
-                JwtErrorType.MalformedJwtException -> setErrorResponse(response, JwtErrorCode.JWT_TOKEN_ERROR)
-                JwtErrorType.UnsupportedJwtException -> setErrorResponse(
-                    response,
-                    JwtErrorCode.JWT_TOKEN_UNSUPPORTED_ERROR
-                )
-
-                JwtErrorType.IllegalArgumentException -> setErrorResponse(
-                    response,
-                    JwtErrorCode.JWT_TOKEN_ILL_EXCEPTION
-                )
-
-                JwtErrorType.UNKNOWN_EXCEPTION -> setErrorResponse(response, JwtErrorCode.JWT_UNKNOWN_EXCEPTION)
+            } catch (e: Exception) {
+                println("Exception occurred during token verification: ${e.message}")
+                setErrorResponse(response, JwtErrorCode.JWT_UNKNOWN_EXCEPTION)
             }
         }
+
     }
 
     private fun setErrorResponse(

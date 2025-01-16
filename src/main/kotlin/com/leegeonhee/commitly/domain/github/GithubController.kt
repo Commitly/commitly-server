@@ -13,11 +13,11 @@ class GitHubController(private val gitHubService: GitHubService) {
 
     @GetMapping("/commits/messages")
     suspend fun getCommitMessages(
-//        @GetAuthenticatedId userId: Long,
+        @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
     ): BaseResponse<List<CommitInfo>> {
         val targetDate = LocalDate.parse(date)
-        return gitHubService.getCommitMessages(1, targetDate)
+        return gitHubService.getCommitMessages(userId, targetDate)
     }
 
     @GetMapping("/commits/{userName}/fromDB")

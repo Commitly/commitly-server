@@ -2,8 +2,7 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import GitHubResponse
-import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
-import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
+import com.leegeonhee.commitly.domain.user.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepo
 import com.leegeonhee.commitly.domain.gpt.GptService
@@ -182,10 +181,6 @@ class GitHubService(
             userRepository.findById(userId).get().login
         }
         val userCommit = getCommitMessages(userId, date)
-        val userInfo = withContext(Dispatchers.IO) {
-            userRepository.findByLogin(login)
-        }
-        println("adjadjadjkfakjdfkjd---------------${userInfo.login}")
         if (userCommit.data.isNullOrEmpty()) {
             return BaseResponse(
                 status = 404,
@@ -193,11 +188,7 @@ class GitHubService(
                 data = null
             )
         }
-        println("범인찾기---------------${userInfo.login}")
-
         val response = gptService.askToGptRequest(userCommit.data.toString())
-        println("gpt 한테 왜 안물어봐")
-
         withContext(Dispatchers.IO) {
             val user = userRepository.findById(userId).orElseThrow {
                 IllegalStateException("User not found with id: $userId")

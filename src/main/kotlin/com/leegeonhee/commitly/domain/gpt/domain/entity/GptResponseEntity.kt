@@ -1,6 +1,6 @@
 package com.leegeonhee.commitly.domain.gpt.domain.entity
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
+import com.leegeonhee.commitly.domain.user.domain.entity.UserEntity
 import jakarta.persistence.*
 
 @Entity

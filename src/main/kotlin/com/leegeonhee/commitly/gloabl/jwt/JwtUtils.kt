@@ -1,6 +1,7 @@
 package com.leegeonhee.commitly.gloabl.jwt
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
+import com.leegeonhee.commitly.domain.user.domain.entity.UserEntity
+import com.leegeonhee.commitly.domain.user.domain.model.user.user.User
 import com.leegeonhee.commitly.gloabl.jwt.exception.type.JwtErrorType
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
@@ -8,7 +9,6 @@ import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
@@ -57,7 +57,7 @@ class JwtUtils(
         return token.removePrefix("Bearer ")
     }
 
-    fun generate(user: UserEntity): JwtInfo {
+    fun generate(user: User): JwtInfo {
         val accessToken = createToken(
             user = user,
             tokenExpired = jwtProperties.accessExpired
@@ -66,34 +66,30 @@ class JwtUtils(
             user = user,
             tokenExpired = jwtProperties.refreshExpired
         )
-
-
         return JwtInfo("Bearer $accessToken", "Bearer $refreshToken")
     }
 
     fun getAuthentication(token: String): Authentication {
         val tokenWithoutBearer = getToken(token)
-        println("Getting authentication for token: $tokenWithoutBearer")
         val username = getUsername(tokenWithoutBearer)
-        println("Username from token: $username")
         val userDetails = userDetailsService.loadUserByUsername(username)
-        println("UserDetails loaded: ${userDetails.username}")
-        return UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+        val isAuth = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+        println(isAuth)
+        return isAuth
     }
-    fun refreshToken(user: UserEntity): String {
+    fun refreshToken(user: User): String {
         return "Bearer " + createToken(
             user = user,
             tokenExpired = jwtProperties.accessExpired
         )
     }
 
-    private fun createToken(user: UserEntity, tokenExpired: Long): String {
+    private fun createToken(user: User, tokenExpired: Long): String {
         val now: Long = Date().time
         return Jwts.builder()
-            .subject(user.login)  // subject 추가
             .claim("id", user.id)
+            .claim("login", user.login)
             .claim("role", user.role)
-                .claim("login", user.login)
             .issuedAt(Date(now))
             .expiration(Date(now + tokenExpired))
             .signWith(secretKey)

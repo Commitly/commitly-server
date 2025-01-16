@@ -1,13 +1,13 @@
 package com.leegeonhee.commitly.gloabl.jwt
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
+import com.leegeonhee.commitly.domain.user.domain.model.user.user.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 
 class JwtUserDetails(
-    val user: UserEntity
+    val user: User
 ) : UserDetails {
 
     val id: Long? = user.id
@@ -21,11 +21,11 @@ class JwtUserDetails(
     }
 
     override fun getPassword(): String {
-        return "깃허브 로그인만 만들어서 없음"
+        return "없음"
     }
 
     override fun getUsername(): String {
-        return user.login
+        return user.name
     }
 
     override fun isAccountNonExpired(): Boolean {
