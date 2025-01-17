@@ -2,6 +2,7 @@ package com.leegeonhee.commitly.domain.user.service
 
 import com.leegeonhee.commitly.domain.user.domain.entity.UserEntity
 import com.leegeonhee.commitly.domain.user.domain.internal.github.GithubOAuth2Client
+import com.leegeonhee.commitly.domain.user.domain.mapper.UserMapper
 import com.leegeonhee.commitly.domain.user.domain.model.user.user.User
 import com.leegeonhee.commitly.domain.user.domain.repository.UserRepository
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Service
 class AuthServiceImpl(
     private val userRepository: UserRepository,
     private val githubOAuth2Client: GithubOAuth2Client,
-    private val jwtUtils: JwtUtils
+    private val jwtUtils: JwtUtils,
+    private val userMapper: UserMapper,
 ) : AuthService {
     override fun githubOAuth2SignIn(code: String): BaseResponse<JwtInfo> {
         val githubAccessToken = githubOAuth2Client.getAccessToken(code) ?: throw CustomException(
@@ -44,19 +46,20 @@ class AuthServiceImpl(
         )
         val nowUser =  userRepository.findAllByUserId(userId)
 
-        val jwt = jwtUtils.generate(
+        val user =
             User(
+                id = nowUser.first().id,
                 userId = nowUser.first().userId,
                 login = nowUser.first().login,
                 name = nowUser.first().name,
                 role = nowUser.first().role,
                 responses = nowUser.first().responses,
-            ))
+            )
+        val jwt = jwtUtils.generate(user = user)
         return BaseResponse(
             status = 200,
             message = "로그인 되었음",
             data = jwt
         )
-
     }
 }

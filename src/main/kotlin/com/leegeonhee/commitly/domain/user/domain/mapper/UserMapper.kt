@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component
 
 @Component
 class UserMapper(
-){
+) {
     fun toDomain(entity: UserEntity): User {
         return User(
+            id = entity.id,
             userId = entity.userId,
             login = entity.login,
             name = entity.name,

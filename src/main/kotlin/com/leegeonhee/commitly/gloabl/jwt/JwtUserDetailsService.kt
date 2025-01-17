@@ -11,21 +11,23 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class JwtUserDetailsService (
+class JwtUserDetailsService(
     private val userRepository: UserRepository,
     private val userMapper: UserMapper
 ) : UserDetailsService {
 
     @Transactional(readOnly = true)
     override fun loadUserByUsername(login: String): UserDetails {
-        return JwtUserDetails (
+        val user = JwtUserDetails(
             user = userMapper.toDomain(
-                entity = userRepository.findByLogin(login)?: throw CustomException(
+                entity = userRepository.findByLogin(login) ?: throw CustomException(
                     status = HttpStatus.NOT_FOUND,
                     message = "ㅇㄴ",
                 )
             )
         )
+        println("아이디가 없나${user.username}")
+        return user
     }
 
 }

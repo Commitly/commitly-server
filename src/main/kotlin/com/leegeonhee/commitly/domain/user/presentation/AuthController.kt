@@ -14,5 +14,4 @@ class AuthController(
     @GetMapping("/login/oauth2/code/github")
     fun githubOAuth2SignIn(@RequestParam code: String) = authService.githubOAuth2SignIn(code)
 
-
 }
