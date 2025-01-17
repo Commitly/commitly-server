@@ -12,9 +12,11 @@ import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import org.springframework.web.reactive.function.client.bodyToMono
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -45,10 +47,10 @@ class GitHubService(
         }
     }
 
-    suspend fun getCommitMessages(userId: Long,date: LocalDate): BaseResponse<List<CommitInfo>> {
-        val username = withContext(Dispatchers.IO) {
-            userRepository.findById(userId)
-        }.get().login
+    fun getCommitMessages(userId: Long,date: LocalDate): BaseResponse<List<CommitInfo>> {
+        val username =
+            userRepository.findById(userId).get().login
+
         val duplicationChecker = getFromDB(username, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {
             println("좋은거 찾음")
@@ -133,9 +135,11 @@ class GitHubService(
         val response = webClient.post()
             .bodyValue(mapOf("query" to query))
             .retrieve()
-            .awaitBody<GitHubResponse>()
+            .bodyToMono<GitHubResponse>()
+            .block()
 
-        val commitInfos = response.data.user.repositories.nodes.flatMap { repo ->
+
+        val commitInfos = response?.data?.user?.repositories?.nodes?.flatMap { repo ->
             repo.defaultBranchRef?.target?.history?.nodes?.map { commit ->
                 CommitInfo(
                     repositoryName = repo.name,
@@ -143,10 +147,9 @@ class GitHubService(
                     committedDate = commit.committedDate
                 )
             } ?: emptyList() // 커밋이 없으면 빈 리스트로 처리
-        }
+        } ?: emptyList() // repositories가 null일 경우 빈 리스트 반환
 
         if (commitInfos.isNotEmpty()) {
-            withContext(Dispatchers.IO){
                 commitInfos.forEach {
                     githubRepo.save(
                         CommitInfoEntity(
@@ -156,7 +159,7 @@ class GitHubService(
                             committedDate = it.committedDate
                         )
                     )
-                }
+
             }
         }
         return if (commitInfos.isEmpty()) {
@@ -175,12 +178,11 @@ class GitHubService(
     }
 
 
-    suspend fun generateMemoirWithGpt(userId: Long, date: LocalDate): BaseResponse<String> {
-        println("adfjkladjkldkajlfakdldsf0d00f0ads0ds-fdsa-fs-fadsfsad :      $userId")
-        val login = withContext(Dispatchers.IO) {
-            userRepository.findById(userId).get().login
-        }
+    fun generateMemoirWithGpt(userId: Long, date: LocalDate): BaseResponse<String> {
+        println("Processing userId: $userId for date: $date")
+        val login = userRepository.findById(userId).get().login
         val userCommit = getCommitMessages(userId, date)
+
         if (userCommit.data.isNullOrEmpty()) {
             return BaseResponse(
                 status = 404,
@@ -188,19 +190,20 @@ class GitHubService(
                 data = null
             )
         }
+
         val response = gptService.askToGptRequest(userCommit.data.toString())
-        withContext(Dispatchers.IO) {
-            val user = userRepository.findById(userId).orElseThrow {
-                IllegalStateException("User not found with id: $userId")
-            }
-            gptResponseRepository.save(
-                GptResponseEntity(
-                    user = user,
-                    response = response,
-                    date = date.toString()
-                )
-            )
+        val user = userRepository.findById(userId).orElseThrow {
+            IllegalStateException("User not found with id: $userId")
         }
+
+        gptResponseRepository.save(
+            GptResponseEntity(
+                user = user,
+                response = response,
+                date = date.toString()
+            )
+        )
+
         println(response)
         return BaseResponse(
             status = 200,

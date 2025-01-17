@@ -4,6 +4,7 @@ import CommitInfo
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.common.annotation.GetAuthenticatedId
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -12,7 +13,7 @@ import java.time.LocalDate
 class GitHubController(private val gitHubService: GitHubService) {
 
     @GetMapping("/commits/messages")
-    suspend fun getCommitMessages(
+    fun getCommitMessages(
         @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
     ): BaseResponse<List<CommitInfo>> {
@@ -30,11 +31,12 @@ class GitHubController(private val gitHubService: GitHubService) {
 //
 
     @GetMapping("/make")
-    suspend fun getMakeCommitMessages(
+    fun getMakeCommitMessages(
         @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
-    ) = gitHubService.generateMemoirWithGpt(
-        userId = userId,
-        date = LocalDate.parse(date)
-    )
+    ): ResponseEntity<BaseResponse<String>> {
+        val response = gitHubService.generateMemoirWithGpt(userId, LocalDate.parse(date))
+        return ResponseEntity.ok(response)
+    }
+
 }
