@@ -1,6 +1,7 @@
-package com.leegeonhee.commitly.domain.user.domain.entity
+package com.leegeonhee.commitly.domain.auth.domain.entity
 
-import com.leegeonhee.commitly.domain.user.domain.model.user.UserRole
+import com.fasterxml.jackson.annotation.JsonManagedReference
+import com.leegeonhee.commitly.domain.auth.domain.model.user.UserRole
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import jakarta.persistence.*
 
@@ -18,5 +19,6 @@ class UserEntity(
     @Column(nullable = false)
     val role: UserRole = UserRole.ROLE_USER,
     @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @JsonManagedReference
     val responses: List<GptResponseEntity> = mutableListOf()
 )
