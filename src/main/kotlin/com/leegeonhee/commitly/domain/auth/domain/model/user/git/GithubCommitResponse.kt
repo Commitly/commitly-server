@@ -1,3 +1,3 @@
-package com.leegeonhee.commitly.domain.user.domain.model.user.git
+package com.leegeonhee.commitly.domain.auth.domain.model.user.git
 
 class GithubCommitResponse : ArrayList<GithubCommitResponseItem>()

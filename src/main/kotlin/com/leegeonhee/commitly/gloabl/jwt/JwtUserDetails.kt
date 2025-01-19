@@ -1,6 +1,6 @@
 package com.leegeonhee.commitly.gloabl.jwt
 
-import com.leegeonhee.commitly.domain.user.domain.model.user.user.User
+import com.leegeonhee.commitly.domain.auth.domain.model.user.user.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails

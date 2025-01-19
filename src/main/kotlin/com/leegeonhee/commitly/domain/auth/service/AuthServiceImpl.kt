@@ -1,10 +1,10 @@
-package com.leegeonhee.commitly.domain.user.service
+package com.leegeonhee.commitly.domain.auth.service
 
-import com.leegeonhee.commitly.domain.user.domain.entity.UserEntity
-import com.leegeonhee.commitly.domain.user.domain.internal.github.GithubOAuth2Client
-import com.leegeonhee.commitly.domain.user.domain.mapper.UserMapper
-import com.leegeonhee.commitly.domain.user.domain.model.user.user.User
-import com.leegeonhee.commitly.domain.user.domain.repository.UserRepository
+import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
+import com.leegeonhee.commitly.domain.auth.domain.internal.github.GithubOAuth2Client
+import com.leegeonhee.commitly.domain.auth.domain.mapper.UserMapper
+import com.leegeonhee.commitly.domain.auth.domain.model.user.user.User
+import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.exception.CustomException
 import com.leegeonhee.commitly.gloabl.jwt.JwtInfo
@@ -20,10 +20,12 @@ class AuthServiceImpl(
     private val userMapper: UserMapper,
 ) : AuthService {
     override fun githubOAuth2SignIn(code: String): BaseResponse<JwtInfo> {
+        println(code)
         val githubAccessToken = githubOAuth2Client.getAccessToken(code) ?: throw CustomException(
             status = HttpStatus.UNAUTHORIZED,
             message = "너가 잘못했음"
         )
+
         println(githubAccessToken)
         val githubUserInfo = githubOAuth2Client.getUserInfo(
             githubAccessToken.accessToken ?: throw CustomException(

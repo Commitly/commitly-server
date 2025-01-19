@@ -2,7 +2,7 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import GitHubResponse
-import com.leegeonhee.commitly.domain.user.domain.repository.UserRepository
+import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepo
 import com.leegeonhee.commitly.domain.gpt.GptService
@@ -10,12 +10,8 @@ import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.bodyToMono
 import java.time.LocalDate
 import java.time.LocalTime

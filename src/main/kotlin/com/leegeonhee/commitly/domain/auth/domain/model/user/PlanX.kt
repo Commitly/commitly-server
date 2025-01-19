@@ -1,4 +1,4 @@
-package com.leegeonhee.commitly.domain.user.domain.model.user
+package com.leegeonhee.commitly.domain.auth.domain.model.user
 
 data class PlanX(
     val collaborators: Int,

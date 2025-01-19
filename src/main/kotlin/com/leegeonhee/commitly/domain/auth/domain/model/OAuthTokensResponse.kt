@@ -1,4 +1,4 @@
-package com.leegeonhee.commitly.domain.user.domain.model
+package com.leegeonhee.commitly.domain.auth.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

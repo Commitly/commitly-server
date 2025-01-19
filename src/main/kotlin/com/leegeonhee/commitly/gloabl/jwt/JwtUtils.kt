@@ -1,6 +1,6 @@
 package com.leegeonhee.commitly.gloabl.jwt
 
-import com.leegeonhee.commitly.domain.user.domain.model.user.user.User
+import com.leegeonhee.commitly.domain.auth.domain.model.user.user.User
 import com.leegeonhee.commitly.gloabl.jwt.exception.type.JwtErrorType
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
@@ -87,7 +87,6 @@ class JwtUtils(
 
     private fun createToken(user: User, tokenExpired: Long): String {
         val now: Long = Date().time
-        println("이거 왜 안먹냐 ${user.id}")
         return Jwts.builder()
             .claim("id", user.id)
             .claim("email", user.login)

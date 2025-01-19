@@ -1,6 +1,6 @@
-package com.leegeonhee.commitly.domain.user.domain.model.user.user
+package com.leegeonhee.commitly.domain.auth.domain.model.user.user
 
-import com.leegeonhee.commitly.domain.user.domain.model.user.UserRole
+import com.leegeonhee.commitly.domain.auth.domain.model.user.UserRole
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 
 data class User(

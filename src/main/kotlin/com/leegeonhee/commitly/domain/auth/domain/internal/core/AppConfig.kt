@@ -1,4 +1,4 @@
-package com.leegeonhee.commitly.domain.user.domain.internal.core
+package com.leegeonhee.commitly.domain.auth.domain.internal.core
 
 
 import org.springframework.context.annotation.Bean

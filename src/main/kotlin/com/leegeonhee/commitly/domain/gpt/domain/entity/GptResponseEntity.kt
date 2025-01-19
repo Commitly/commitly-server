@@ -1,6 +1,7 @@
 package com.leegeonhee.commitly.domain.gpt.domain.entity
 
-import com.leegeonhee.commitly.domain.user.domain.entity.UserEntity
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
 import jakarta.persistence.*
 
 @Entity
@@ -12,6 +13,7 @@ class GptResponseEntity(
 
     @ManyToOne(fetch = FetchType.LAZY) // CascadeType 설정
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     val user: UserEntity,
     @Column(nullable = false)
     val response: String,

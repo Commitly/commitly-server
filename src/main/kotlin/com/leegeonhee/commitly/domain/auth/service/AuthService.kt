@@ -1,4 +1,4 @@
-package com.leegeonhee.commitly.domain.user.service
+package com.leegeonhee.commitly.domain.auth.service
 
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.jwt.JwtInfo

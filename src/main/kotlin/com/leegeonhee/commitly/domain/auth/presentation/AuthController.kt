@@ -1,6 +1,6 @@
-package com.leegeonhee.commitly.domain.user.presentation
+package com.leegeonhee.commitly.domain.auth.presentation
 
-import com.leegeonhee.commitly.domain.user.service.AuthService
+import com.leegeonhee.commitly.domain.auth.service.AuthService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController

@@ -1,10 +1,10 @@
-package com.leegeonhee.commitly.domain.user.domain.internal.github
+package com.leegeonhee.commitly.domain.auth.domain.internal.github
 
-import com.leegeonhee.commitly.domain.user.domain.model.GithubProperties
-import com.leegeonhee.commitly.domain.user.domain.model.OAuthAccessTokenRequest
-import com.leegeonhee.commitly.domain.user.domain.model.OAuthTokensResponse
-import com.leegeonhee.commitly.domain.user.domain.model.user.GithubUserInfo
-import com.leegeonhee.commitly.domain.user.domain.model.user.git.GithubCommitResponse
+import com.leegeonhee.commitly.domain.auth.domain.model.GithubProperties
+import com.leegeonhee.commitly.domain.auth.domain.model.OAuthAccessTokenRequest
+import com.leegeonhee.commitly.domain.auth.domain.model.OAuthTokensResponse
+import com.leegeonhee.commitly.domain.auth.domain.model.user.GithubUserInfo
+import com.leegeonhee.commitly.domain.auth.domain.model.user.git.GithubCommitResponse
 import com.leegeonhee.commitly.gloabl.exception.CustomException
 import org.springframework.http.*
 import org.springframework.stereotype.Component
@@ -17,8 +17,8 @@ class GithubOAuth2Client(
 ) {
     fun getAccessToken(code: String): OAuthTokensResponse? {
         val body = OAuthAccessTokenRequest(
-            clientId = githubProperties.clientId?: throw CustomException(HttpStatus.UNAUTHORIZED, "조떗음"),
-            clientSecret = githubProperties.clientSecret?:  throw CustomException(HttpStatus.UNAUTHORIZED, "조떗음"),
+            clientId = githubProperties.clientId?: throw CustomException(HttpStatus.UNAUTHORIZED, "ㄷㄷ"),
+            clientSecret = githubProperties.clientSecret?:  throw CustomException(HttpStatus.UNAUTHORIZED, "ㄷㄷ"),
             code = code
         )
         val headers = HttpHeaders()

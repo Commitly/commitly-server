@@ -1,9 +1,8 @@
 package com.leegeonhee.commitly.gloabl.jwt
 
-import com.leegeonhee.commitly.domain.user.domain.mapper.UserMapper
-import com.leegeonhee.commitly.domain.user.domain.repository.UserRepository
+import com.leegeonhee.commitly.domain.auth.domain.mapper.UserMapper
+import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.gloabl.exception.CustomException
-import com.leegeonhee.commitly.gloabl.jwt.exception.UserErrorCode
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
