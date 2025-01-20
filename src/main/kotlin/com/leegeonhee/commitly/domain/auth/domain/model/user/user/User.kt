@@ -9,5 +9,6 @@ data class User(
     val login: String,
     var name: String, // Email,
     val role: UserRole = UserRole.ROLE_USER,
-    val responses: List<GptResponseEntity> = mutableListOf()
+    val responses: List<GptResponseEntity> = mutableListOf(),
+    val avataUrl: String
 )

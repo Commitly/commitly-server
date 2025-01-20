@@ -14,7 +14,8 @@ class UserMapper(
             login = entity.login,
             name = entity.name,
             role = entity.role,
-            responses = entity.responses
+            responses = entity.responses,
+            avataUrl = entity.avataUrl,
         )
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 @OpenAPIDefinition(
     info = io.swagger.v3.oas.annotations.info.Info(
-        title = "Chat API",
+        title = "Commitly",
         version = "1.0",
     )
 )
@@ -34,8 +34,8 @@ class SwaggerConfig : WebMvcConfigurer {
             )
             .addServersItem(Server().url("/"))
             .info(
-                Info().title("CHAT API")
-                    .description("Chat API Spec")
+                Info().title("Commitly")
+                    .description("Commitly Spec")
                     .version("v1.0.0")
             )
     }

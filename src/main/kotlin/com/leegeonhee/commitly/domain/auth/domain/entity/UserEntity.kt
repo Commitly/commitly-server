@@ -18,6 +18,8 @@ class UserEntity(
     var name: String, // Email,
     @Column(nullable = false)
     val role: UserRole = UserRole.ROLE_USER,
+    @Column(nullable = false)
+    val avataUrl: String,
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @JsonManagedReference
     val responses: List<GptResponseEntity> = mutableListOf()
