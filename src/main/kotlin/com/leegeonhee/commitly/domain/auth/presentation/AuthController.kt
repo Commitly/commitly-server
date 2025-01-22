@@ -2,7 +2,6 @@ package com.leegeonhee.commitly.domain.auth.presentation
 
 import com.leegeonhee.commitly.domain.auth.domain.model.RefreshToken
 import com.leegeonhee.commitly.domain.auth.service.AuthService
-import com.leegeonhee.commitly.gloabl.util.RateLimit
 import org.springframework.web.bind.annotation.*
 
 
@@ -12,11 +11,11 @@ class AuthController(
     private val authService: AuthService,
 ) {
 
-    @RateLimit
+//    @RateLimit
     @GetMapping("/oauth2/code/github")
     fun githubOAuth2SignIn(@RequestParam code: String) = authService.githubOAuth2SignIn(code)
 
-    @RateLimit
+//    @RateLimit
     @PostMapping("/refresh")
     fun refreshToken(@RequestBody token: RefreshToken) = authService.refreshToken(token)
 }
