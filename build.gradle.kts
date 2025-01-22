@@ -51,10 +51,10 @@ dependencies {
     //
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
-//    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
-//    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-//    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
 }
 
