@@ -3,6 +3,7 @@ package com.leegeonhee.commitly.domain.github
 import CommitInfo
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.common.annotation.GetAuthenticatedId
+import com.leegeonhee.commitly.gloabl.util.RateLimit
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,6 +13,7 @@ import java.time.LocalDate
 @RequestMapping("/github")
 class GitHubController(private val gitHubService: GitHubService) {
 
+    @RateLimit
     @GetMapping("/commits/messages")
     fun getCommitMessages(
         @GetAuthenticatedId userId: Long,
@@ -21,6 +23,7 @@ class GitHubController(private val gitHubService: GitHubService) {
         return gitHubService.getCommitMessages(userId, targetDate)
     }
 
+    @RateLimit
     @GetMapping("/commits/{userName}/fromDB")
     fun getFromDB(
         @PathVariable userName: String,
@@ -30,6 +33,7 @@ class GitHubController(private val gitHubService: GitHubService) {
 //
 //
 
+    @RateLimit
     @GetMapping("/make")
     fun getMakeCommitMessages(
         @GetAuthenticatedId userId: Long,
