@@ -176,7 +176,7 @@ class GitHubService(
 
     fun generateMemoirWithGpt(userId: Long, date: LocalDate): BaseResponse<String> {
         println("Processing userId: $userId for date: $date")
-        val login = userRepository.findById(userId).get().login
+//        val login = userRepository.findById(userId).get().login
         val userCommit = getCommitMessages(userId, date)
 
         if (userCommit.data.isNullOrEmpty()) {
