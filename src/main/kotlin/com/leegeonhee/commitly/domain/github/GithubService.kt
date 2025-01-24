@@ -46,6 +46,7 @@ class GitHubService(
     fun getCommitMessages(userId: Long,date: LocalDate): BaseResponse<List<CommitInfo>> {
         val username =
             userRepository.findById(userId).get().login
+        println("안녕하세혁 $date")
 
         val duplicationChecker = getFromDB(username, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {

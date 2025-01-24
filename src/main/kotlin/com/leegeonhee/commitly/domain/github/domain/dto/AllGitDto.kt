@@ -21,7 +21,7 @@ data class Organizations(
 
 data class RepositoryNode(
     val name: String,
-    val owner: Owner,
+    val owner: Owner?,
     val defaultBranchRef: DefaultBranchRef?
 )
 
