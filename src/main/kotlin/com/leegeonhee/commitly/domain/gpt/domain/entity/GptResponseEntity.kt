@@ -19,4 +19,5 @@ class GptResponseEntity(
     val response: String,
 
     @Column(nullable = false)
-    val date: String, )
+    val responseDate: String,
+)

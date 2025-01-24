@@ -29,11 +29,17 @@ class GitHubController(private val gitHubService: GitHubService) {
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
     )  = gitHubService.getFromDB(userName, date)
 
+
+    @GetMapping("/gpt/get")
+    fun getGptFromDB(
+        @GetAuthenticatedId userId: Long,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
+    ) = gitHubService.getGptResponseFromDb(userId, date)
 //
 //
 
 //    @RateLimit
-    @GetMapping("/make")
+    @GetMapping("/gpt/make")
     fun getMakeCommitMessages(
         @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String

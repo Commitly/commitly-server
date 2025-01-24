@@ -37,5 +37,8 @@ class GptService(
         val result = openAiChatModel.call(prompt).result.output.content
         return result ?: "안왔음 ㅎㅎ"
     }
+
+
+    fun getGptResponseFromDB(userId: Long, day: String) = gptResponseRepository.findByUserNameAndDay(userId, day)
 }
 

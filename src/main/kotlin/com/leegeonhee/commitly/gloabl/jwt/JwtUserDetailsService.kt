@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+
 
 @Service
 class JwtUserDetailsService(
@@ -15,7 +15,7 @@ class JwtUserDetailsService(
     private val userMapper: UserMapper
 ) : UserDetailsService {
 
-    @Transactional(readOnly = true)
+
     override fun loadUserByUsername(login: String): UserDetails {
         val user = JwtUserDetails(
             user = userMapper.toDomain(

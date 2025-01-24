@@ -193,21 +193,27 @@ class GitHubService(
             IllegalStateException("User not found with id: $userId")
         }
 
+        println(response)
+
         gptResponseRepository.save(
             GptResponseEntity(
                 user = user,
                 response = response,
-                date = date.toString()
+                responseDate = date.toString()
             )
         )
 
-        println(response)
         return BaseResponse(
             status = 200,
             message = "잘옴",
             data = response
         )
     }
+
+    fun getGptResponseFromDb(userId: Long, day: String) = gptResponseRepository.findByUserNameAndDay(userId, day)
+
+
+
 
 
 }
