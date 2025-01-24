@@ -4,7 +4,7 @@ import CommitInfo
 import GitHubResponse
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
-import com.leegeonhee.commitly.domain.github.repository.GithubRepo
+import com.leegeonhee.commitly.domain.github.repository.GithubRepository
 import com.leegeonhee.commitly.domain.gpt.GptService
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
@@ -20,14 +20,14 @@ import java.time.format.DateTimeFormatter
 @Service
 class GitHubService(
     private val webClient: WebClient,
-    private val githubRepo: GithubRepo,
+    private val githubRepository: GithubRepository,
     private val gptService: GptService,
     private val userRepository: UserRepository,
     private val gptResponseRepository: GptResponseRepository,
     private val jwtUtils: JwtUtils
 ) {
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
-        val commit = githubRepo.findByUserNameAndDay(name, date)
+        val commit = githubRepository.findByUserNameAndDay(name, date)
         return if (commit.isNotEmpty()) {
             BaseResponse(
                 status = 200,
@@ -148,7 +148,7 @@ class GitHubService(
 
         if (commitInfos.isNotEmpty()) {
                 commitInfos.forEach {
-                    githubRepo.save(
+                    githubRepository.save(
                         CommitInfoEntity(
                             repositoryName = it.repositoryName,
                             userName = username,
