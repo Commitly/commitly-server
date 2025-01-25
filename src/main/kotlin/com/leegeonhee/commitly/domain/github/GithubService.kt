@@ -2,6 +2,7 @@ package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
 import GitHubResponse
+import com.leegeonhee.commitly.domain.auth.domain.model.LiteGptGetDb
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepository
@@ -210,8 +211,18 @@ class GitHubService(
         )
     }
 
-    fun getGptResponseFromDb(userId: Long, day: String) = gptResponseRepository.findByUserNameAndDay(userId, day)
-
+    fun getGptResponseFromDb(userId: Long, day: String): BaseResponse<List<LiteGptGetDb>> {
+        return BaseResponse(
+            status = 200,
+            data = gptResponseRepository.findByUserNameAndDay(userId, day).map {
+                LiteGptGetDb(
+                    response = it.response,
+                    responseDate = it.responseDate
+                )
+            },
+            message = "굿"
+        )
+    }
 
 
 
