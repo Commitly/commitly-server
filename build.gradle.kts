@@ -48,6 +48,10 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     implementation("io.jsonwebtoken:jjwt-impl:0.12.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
+    // bucket4j
+    implementation("com.giffing.bucket4j.spring.boot.starter:bucket4j-spring-boot-starter:0.5.2"){
+        exclude(group= "org.ehcache", module= "ehcache")
+    }
     //
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtimeOnly("com.mysql:mysql-connector-j")
