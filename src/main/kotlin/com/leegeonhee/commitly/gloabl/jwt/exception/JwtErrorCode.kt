@@ -15,5 +15,6 @@ enum class JwtErrorCode (
     JWT_TOKEN_ILL_EXCEPTION(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "JWT 처리 과정에서 오류가 발생했어요"),
     JWT_UNKNOWN_EXCEPTION(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "JWT 처리과정에서 알수없는 오류가 발생했어요"),
     JWT_EMPTY_EXCEPTION(HttpStatus.FORBIDDEN, "FORBIDDEN", "토큰을 넣어주세요."),
+    PLS_WAIT_A_SECOND(HttpStatus.FORBIDDEN, "FORBIDDEN", "토큰을 넣어주세요."),
 
 }

@@ -6,6 +6,7 @@ import com.leegeonhee.commitly.gloabl.jwt.filter.JwtAuthenticationFilter
 import com.leegeonhee.commitly.gloabl.jwt.filter.JwtExceptionFilter
 import com.leegeonhee.commitly.gloabl.jwt.handler.JwtAccessDeniedHandler
 import com.leegeonhee.commitly.gloabl.jwt.handler.JwtAuthenticationEntryPoint
+import com.leegeonhee.commitly.gloabl.util.RateLimitService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -24,7 +25,8 @@ class SecurityConfig (
     private val objectMapper: ObjectMapper,
     private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     private val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
-    private val jwtExceptionFilter: JwtExceptionFilter
+    private val jwtExceptionFilter: JwtExceptionFilter,
+    private val rateLimitService: RateLimitService
 ) {
 
     @Bean
@@ -62,7 +64,7 @@ class SecurityConfig (
                 it.accessDeniedHandler(jwtAccessDeniedHandler)
             }
 
-            .addFilterBefore(JwtAuthenticationFilter(jwtUtils, objectMapper), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtAuthenticationFilter(jwtUtils, objectMapper,rateLimitService), UsernamePasswordAuthenticationFilter::class.java)
             .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter::class.java)
             .build()
     }
