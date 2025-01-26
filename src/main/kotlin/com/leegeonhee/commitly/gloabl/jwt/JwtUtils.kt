@@ -1,5 +1,6 @@
 package com.leegeonhee.commitly.gloabl.jwt
 
+import com.leegeonhee.commitly.domain.auth.domain.model.user.UserRole
 import com.leegeonhee.commitly.domain.auth.domain.model.user.user.User
 import com.leegeonhee.commitly.gloabl.jwt.exception.type.JwtErrorType
 import io.jsonwebtoken.ExpiredJwtException
@@ -31,6 +32,13 @@ class JwtUtils(
     fun getUsername(token: String): String {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload.get(
             "email",
+            String::class.java
+        )
+    }
+
+    fun getUserRole(token: String): String{
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload.get(
+            "role",
             String::class.java
         )
     }
