@@ -44,7 +44,7 @@ class GitHubService(
         }
     }
 
-    fun getCommitMessages(userId: Long,date: LocalDate): BaseResponse<List<CommitInfo>> {
+    fun getCommitMessages(userId: Long, date: LocalDate): BaseResponse<List<CommitInfo>> {
         val username =
             userRepository.findById(userId).get().login
         println("안녕하세혁 $date")
@@ -68,41 +68,14 @@ class GitHubService(
         val fromDate = date.atStartOfDay()
         val toDate = date.atTime(LocalTime.MAX)
         val query = """
-        query {
-          user(login: "$username") {
-            repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-              nodes {
-                name
-                owner {
-                  login
-                }
-                defaultBranchRef {
-                  target {
-                    ... on Commit {
-                      history(
-                        first: 100,
-                        since: "${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                        until: "${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                      ) {
-                        nodes {
-                          message
-                          committedDate
-                          repository {
-                            name
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            organizations(first: 10) {
-              nodes {
-                login
+            query {
+              user(login: "$username") {
                 repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
                   nodes {
                     name
+                    owner {
+                      login
+                    }
                     defaultBranchRef {
                       target {
                         ... on Commit {
@@ -114,6 +87,11 @@ class GitHubService(
                             nodes {
                               message
                               committedDate
+                              author {
+                                user {
+                                  login
+                                }
+                              }
                               repository {
                                 name
                               }
@@ -124,11 +102,43 @@ class GitHubService(
                     }
                   }
                 }
+                organizations(first: 10) {
+                  nodes {
+                    login
+                    repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+                      nodes {
+                        name
+                        defaultBranchRef {
+                          target {
+                            ... on Commit {
+                              history(
+                                first: 100,
+                                since: "${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}",
+                                until: "${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}"
+                              ) {
+                                nodes {
+                                  message
+                                  committedDate
+                                  author {
+                                    user {
+                                      login
+                                    }
+                                  }
+                                  repository {
+                                    name
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
-          }
-        }
-    """.trimIndent()
+        """.trimIndent()
 
         val response = webClient.post()
             .bodyValue(mapOf("query" to query))
@@ -148,15 +158,15 @@ class GitHubService(
         } ?: emptyList() // repositories가 null일 경우 빈 리스트 반환
 
         if (commitInfos.isNotEmpty()) {
-                commitInfos.forEach {
-                    githubRepository.save(
-                        CommitInfoEntity(
-                            repositoryName = it.repositoryName,
-                            userName = username,
-                            message = it.message,
-                            committedDate = it.committedDate
-                        )
+            commitInfos.forEach {
+                githubRepository.save(
+                    CommitInfoEntity(
+                        repositoryName = it.repositoryName,
+                        userName = username,
+                        message = it.message,
+                        committedDate = it.committedDate
                     )
+                )
 
             }
         }
@@ -223,8 +233,4 @@ class GitHubService(
             message = "굿"
         )
     }
-
-
-
-
 }
