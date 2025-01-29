@@ -167,9 +167,9 @@ class GitHubService(
                         committedDate = it.committedDate
                     )
                 )
-
             }
         }
+
         return if (commitInfos.isEmpty()) {
             BaseResponse(
                 status = 404,
@@ -177,6 +177,10 @@ class GitHubService(
                 data = emptyList()
             )
         } else {
+            val commitTag = commitInfos.map {
+                it.repositoryName.toSet()
+            }
+            println("dd"+commitTag)
             BaseResponse(
                 status = 200,
                 message = "커밋을 성공적으로 조회했습니다.",
