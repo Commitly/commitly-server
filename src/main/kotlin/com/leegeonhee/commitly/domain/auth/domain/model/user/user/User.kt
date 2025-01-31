@@ -2,6 +2,7 @@ package com.leegeonhee.commitly.domain.auth.domain.model.user.user
 
 import com.leegeonhee.commitly.domain.auth.domain.model.user.UserRole
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
+import java.util.*
 
 data class User(
     val id: Long? = null, // ID (PK)
@@ -10,5 +11,5 @@ data class User(
     var name: String, // Email,
     val role: UserRole = UserRole.ROLE_USER,
     val responses: List<GptResponseEntity> = mutableListOf(),
-    val avataUrl: String
+    val avataUrl: String,
 )

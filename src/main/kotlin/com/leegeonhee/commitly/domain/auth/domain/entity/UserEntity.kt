@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.leegeonhee.commitly.domain.auth.domain.model.user.UserRole
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 class UserEntity(
@@ -22,5 +23,12 @@ class UserEntity(
     val avataUrl: String,
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @JsonManagedReference
-    val responses: List<GptResponseEntity> = mutableListOf()
-)
+    val responses: List<GptResponseEntity> = mutableListOf(),
+    @Column(nullable = true, updatable = false)
+    var registrationDate: LocalDateTime? = null
+){
+    @PrePersist
+    fun onPrePersist(){
+        registrationDate = LocalDateTime.now()
+    }
+}
