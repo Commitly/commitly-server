@@ -3,6 +3,7 @@ package com.leegeonhee.commitly.domain.gpt.domain.entity
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "gpt_response")
@@ -20,4 +21,12 @@ class GptResponseEntity(
 
     @Column(nullable = false)
     val responseDate: String,
-)
+
+    @Column(nullable = true, updatable = false)
+    var registrationDate: LocalDateTime? = null
+){
+    @PrePersist
+    fun onPrePersist(){
+        registrationDate = LocalDateTime.now()
+    }
+}
