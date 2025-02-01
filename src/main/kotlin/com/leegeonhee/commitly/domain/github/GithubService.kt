@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -214,7 +215,8 @@ class GitHubService(
             GptResponseEntity(
                 user = user,
                 response = response,
-                responseDate = date.toString()
+                responseDate = date.toString(),
+                registrationDate = LocalDateTime.now()
             )
         )
 

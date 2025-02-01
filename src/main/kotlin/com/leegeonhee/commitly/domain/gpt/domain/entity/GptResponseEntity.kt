@@ -23,7 +23,7 @@ class GptResponseEntity(
     @Column(nullable = false)
     val responseDate: String,
 
-    @CreatedDate
+    @Column(nullable = true)
     var registrationDate: LocalDateTime? = null
 ){
 }
