@@ -78,18 +78,6 @@ jobs:
           target: /home/ubuntu/product
           strip_components: 1  # Remove dist path
 
-
-      - name: EC2 UpLoad
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_SSH_PORT }}
-          source: "dist/*.jar"
-          target: /home/ubuntu/product
-          strip_components: 1
-
       - name: EC2 Run
         uses: appleboy/ssh-action@master
         with:
