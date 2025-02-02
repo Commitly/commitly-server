@@ -84,7 +84,7 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT}}
           script: |
             cd /home/ubuntu/product
-            sh start.sh
+            java -jar commitly-0.0.1-SNAPSHOT.jar
 
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
