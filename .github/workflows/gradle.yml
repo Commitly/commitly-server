@@ -54,39 +54,59 @@ jobs:
       run: ./gradlew test
 
 
-  cd:
-    needs: ci
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: commitly-server
-          path: dist
-      - name: Show downloaded files
-        run: ls -alh dist
-      - name: EC2 Upload
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.REMOTE_SSH_PORT }}
-          source: "dist/*.jar"
-          target: /home/ubuntu/product
-          strip_components: 1 # Remove dist path
-      - name: EC2 Run
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_SSH_PORT}}
-          script: |
-            cd /home/ubuntu/product
-            java -jar commitly-0.0.1-SNAPSHOT.jar
+cd:
+  needs: ci
+  runs-on: ubuntu-latest
+  steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: commitly-server
+        path: dist
 
+    - name: Show downloaded files
+      run: ls -alh dist
 
+    - name: EC2 Upload
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.REMOTE_SSH_PORT }}
+        source: "dist/*.jar"
+        target: /home/ubuntu/product
+        strip_components: 1  # Remove dist path
+
+    - name: EC2 Run
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.EC2_SSH_PORT }}
+        script: |
+          cd /home/ubuntu/product
+
+          # Set environment variables using export
+          export DOCKER_USERNAME="${{ secrets.DOCKER_USERNAME }}"
+          export MAIL_USER="${{ secrets.MAIL_USER }}"
+          export MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+          export REDIS_HOST="${{ secrets.REDIS_HOST }}"
+          export REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}"
+          export REDIS_PORT="${{ secrets.REDIS_PORT }}"
+          export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+          export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
+          export MYSQL_USER="${{ secrets.MYSQL_USER }}"
+          export ACCESS_END="${{ secrets.ACCESS_END }}"
+          export REFRESH_END="${{ secrets.REFRESH_END }}"
+          export JWT_KEY="${{ secrets.JWT_KEY }}"
+          export BUCKET_ACCESS="${{ secrets.BUCKET_ACCESS }}"
+          export BUCKET_NAME="${{ secrets.BUCKET_NAME }}"
+          export BUCKET_SECRET="${{ secrets.BUCKET_SECRET }}"
+
+          # Run the Java application with the environment variables
+          java -jar commitly-0.0.1-SNAPSHOT.jar
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
     #
