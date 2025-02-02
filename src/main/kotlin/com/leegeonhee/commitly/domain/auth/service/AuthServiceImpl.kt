@@ -43,8 +43,8 @@ class AuthServiceImpl(
         users.firstOrNull() ?: userRepository.save(
             UserEntity(
                 userId = githubUserInfo.id,
-                login = githubUserInfo.login ?: throw CustomException(HttpStatus.BAD_REQUEST, "아마 오류 뜰일 없을듯"),
-                name = githubUserInfo.name ?: throw CustomException(HttpStatus.BAD_REQUEST, "아마 오류 뜰일 없을듯"),
+                login = githubUserInfo.login ?: "",
+                name = githubUserInfo.name ?: "",
                 responses = mutableListOf(),
                 avataUrl = githubUserInfo.avatar_url ?: throw CustomException(
                     HttpStatus.BAD_REQUEST,
