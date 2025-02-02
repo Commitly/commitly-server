@@ -7,6 +7,16 @@
 
 name: Java CI with Gradle
 
+env:
+  GITHUB_CLIENT_ID : ${{secrets.OGITHUB_CLIENT_ID}}
+  GITHUB_CLIENT_SECRET : ${{secrets.OGITHUB_CLIENT_SECRET}}
+  GITHUB_PERSONAL_ACCESS_TOKEN : ${{secrets.OGITHUB_PERSONAL_ACCESS_TOKEN}}
+  GPT_KEY : ${{secrets.GPT_KEY}}
+  JWT_KEY : ${{secrets.JWT_KEY}}
+  MYSQL_PASSWORD : ${{secrets.MYSQL_PASSWORD}}
+  MYSQL_URL : ${{secrets.MYSQL_URL}}
+  MYSQL_USER : ${{secrets.MYSQL_USER}}
+
 on:
   push:
     branches: [ "main" ]
