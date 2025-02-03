@@ -92,13 +92,24 @@ jobs:
       - name: EC2 Run
         uses: appleboy/ssh-action@master
         with:
-            host: ${{ secrets.EC2_HOST }}
-            username: ${{ secrets.EC2_USERNAME }}
-            key: ${{ secrets.EC2_SSH_KEY }}
-            port: ${{ secrets.EC2_SSH_PORT }}
-            script: |
-              cd /home/ubuntu/product
-              java -jar commitly-0.0.1-SNAPSHOT.jar
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_SSH_PORT }}
+          script: |
+            # 환경 변수 설정
+            export GITHUB_CLIENT_ID="${{ secrets.OGITHUB_CLIENT_ID }}"
+            export GITHUB_CLIENT_SECRET="${{ secrets.OGITHUB_CLIENT_SECRET }}"
+            export GITHUB_PERSONAL_ACCESS_TOKEN="${{ secrets.OGITHUB_PERSONAL_ACCESS_TOKEN }}"
+            export GPT_KEY="${{ secrets.GPT_KEY }}"
+            export JWT_KEY="${{ secrets.JWT_KEY }}"
+            export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+            export MYSQL_URL="${{ secrets.MYSQL_URL }}"
+            export MYSQL_USER="${{ secrets.MYSQL_USER }}"
+
+            # start.sh 실행
+            /bin/bash /home/ubuntu/product/start.sh
+    
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
