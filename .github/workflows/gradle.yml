@@ -87,7 +87,12 @@ jobs:
           else
             echo "✅ All MYSQL environment variables are set."
           fi
-      
+
+      - name: Check MySQL URL length
+        run: |
+          echo "MySQL URL length: ${#MYSQL_URL}"
+    
+    
 
       - name: EC2 Run
         uses: appleboy/ssh-action@master
