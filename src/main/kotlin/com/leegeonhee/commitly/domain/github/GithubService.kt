@@ -69,77 +69,35 @@ class GitHubService(
         val fromDate = date.atStartOfDay()
         val toDate = date.atTime(LocalTime.MAX)
         val query = """
-            query {
-              user(login: "$username") {
-                repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-                  nodes {
-                    name
-                    owner {
-                      login
-                    }
-                    defaultBranchRef {
-                      target {
-                        ... on Commit {
-                          history(
-                            first: 100,
-                            since: "${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                            until: "${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                          ) {
-                            nodes {
-                              message
-                              committedDate
-                              author {
-                                user {
-                                  login
-                                }
-                              }
-                              repository {
-                                name
-                              }
-                            }
-                          }
+            {
+              search(
+                query: "author:$username committer-date:${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}..${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}", 
+                type: COMMIT, 
+                first: 100
+              ) {
+                edges {
+                  node {
+                    ... on Commit {
+                      repository {
+                        name
+                        owner {
+                          login
                         }
                       }
-                    }
-                  }
-                }
-                organizations(first: 10) {
-                  nodes {
-                    login
-                    repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-                      nodes {
-                        name
-                        defaultBranchRef {
-                          target {
-                            ... on Commit {
-                              history(
-                                first: 100,
-                                since: "${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                                until: "${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                              ) {
-                                nodes {
-                                  message
-                                  committedDate
-                                  author {
-                                    user {
-                                      login
-                                    }
-                                  }
-                                  repository {
-                                    name
-                                  }
-                                }
-                              }
-                            }
-                          }
+                      message
+                      committedDate
+                      author {
+                        user {
+                          login
                         }
+                        email
                       }
                     }
                   }
                 }
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val response = webClient.post()
             .bodyValue(mapOf("query" to query))
