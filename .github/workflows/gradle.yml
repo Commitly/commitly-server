@@ -75,7 +75,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.REMOTE_SSH_PORT }}
           source: "dist/*.jar"
-          target: /home/ubuntu/product
+          target: ~/.ssh/commitly-server/build/libs
           strip_components: 1  # Remove dist path
 
       - name: EC2 Run
@@ -86,8 +86,8 @@ jobs:
             key: ${{ secrets.EC2_SSH_KEY }}
             port: ${{ secrets.EC2_SSH_PORT }}
             script: |
-              cd /home/ubuntu/product
-              java -jar commitly-0.0.1-SNAPSHOT.jar
+              cd ~/.ssh/commitly-server/build/libs
+              nohup java -jar commitly-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
