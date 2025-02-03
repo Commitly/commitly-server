@@ -89,6 +89,7 @@ jobs:
           target: /home/ubuntu/product
           strip_components: 1  # Remove dist path
 
+
       - name: EC2 Run
         uses: appleboy/ssh-action@master
         with:
