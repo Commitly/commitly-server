@@ -42,6 +42,11 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
+
+    - name: Clean build gradle
+      run: |
+        ./gradlew clean build
+      
     - name: Build with Gradle
       run: |
         ./gradlew bootJar
@@ -77,22 +82,6 @@ jobs:
           source: "dist/*.jar"
           target: /home/ubuntu/product
           strip_components: 1  # Remove dist path
-
-
-      - name: Check if MYSQL environment variables are set
-        run: |
-          if [[ -z "${MYSQL_USER}" || -z "${MYSQL_PASSWORD}" ||  -z "${MYSQL_URL}" ]]; then
-            echo "❌ One or more MYSQL environment variables are missing!"
-            exit 1
-          else
-            echo "✅ All MYSQL environment variables are set."
-          fi
-
-      - name: Check MySQL URL length
-        run: |
-          echo "MySQL URL length: ${#MYSQL_URL}"
-    
-    
 
       - name: EC2 Run
         uses: appleboy/ssh-action@master
