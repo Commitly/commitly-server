@@ -79,6 +79,15 @@ jobs:
           strip_components: 1  # Remove dist path
 
 
+      - name: Check if MYSQL environment variables are set
+        run: |
+          if [[ -z "${MYSQL_USER}" || -z "${MYSQL_PASSWORD}" ||  -z "${MYSQL_URL}" ]]; then
+            echo "❌ One or more MYSQL environment variables are missing!"
+            exit 1
+          else
+            echo "✅ All MYSQL environment variables are set."
+          fi
+      
 
       - name: EC2 Run
         uses: appleboy/ssh-action@master
