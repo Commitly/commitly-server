@@ -24,13 +24,16 @@ spring:
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+
     hibernate:
+
       ddl-auto: update
     show_sql: true
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
 jwt:
   secret: ${JWT_KEY} # Put your jwt secret
   expired:
