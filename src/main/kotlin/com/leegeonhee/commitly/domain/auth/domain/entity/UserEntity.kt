@@ -21,9 +21,9 @@ class UserEntity(
     val role: UserRole = UserRole.ROLE_USER,
     @Column(nullable = false)
     val avataUrl: String,
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonManagedReference
-    val responses: List<GptResponseEntity> = mutableListOf(),
+    var responses: MutableList<GptResponseEntity> = mutableListOf(),
     @Column(nullable = true, updatable = false)
     var registrationDate: LocalDateTime? = null
 ){
