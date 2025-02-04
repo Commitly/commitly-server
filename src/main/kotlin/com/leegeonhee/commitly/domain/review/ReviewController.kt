@@ -5,7 +5,7 @@ import com.leegeonhee.commitly.gloabl.common.annotation.GetAuthenticatedId
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/review")
 class ReviewController(private val reviewService: ReviewService) {
     @PostMapping("/create")
     fun writeReview(
