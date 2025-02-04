@@ -42,6 +42,9 @@ class GitHubController(
 //
 //
 
+    @GetMapping("/why")
+    fun whyNotAdd() = BaseResponse(status = 200, message = "왜 안되지", data = "추가 안되는 이유가 뭘까")
+
     //    @RateLimit
     @GetMapping("/gpt/make")
     fun getMakeCommitMessages(
