@@ -3,6 +3,7 @@ package com.leegeonhee.commitly.domain.retocheck
 import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.retocheck.entity.RetoCheckEntity
+import com.leegeonhee.commitly.domain.retocheck.model.NoUserRetoCheckDto
 import com.leegeonhee.commitly.domain.review.model.ReviewRequestBody
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.exception.CustomException
@@ -26,10 +27,15 @@ class RetoCheckService(
             )
         )
 
-    fun getMyDate(id: Long): List<RetoCheckEntity> =
+    fun getMyDate(id: Long): List<NoUserRetoCheckDto> =
         retoCheckRepository.getAllRetoCheckEntityByAuthorOrIdNull(
             userRepository.findByIdOrNull(id) ?: throw CustomException(HttpStatus.NOT_FOUND, "없다는 뜻")
-        ) ?: throw CustomException(
+        )?.map {
+            NoUserRetoCheckDto(
+                retoDate = it.retoDate,
+                createdAt = it.createdAt
+            )
+        } ?: throw CustomException(
             status = HttpStatus.NOT_FOUND,
             message = "404 Not Found 라는 뜻"
         )
