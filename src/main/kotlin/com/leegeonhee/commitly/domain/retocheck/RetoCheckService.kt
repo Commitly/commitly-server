@@ -8,6 +8,8 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class RetoCheckService(
@@ -15,13 +17,18 @@ class RetoCheckService(
     private val userRepository: UserRepository,
 ) {
 
-    fun saveRetoDate(user: Long, date: String) =
-        retoCheckRepository.save(
+    fun saveRetoDate(user: Long, date: String): RetoCheckEntity {
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME // "yyyy-MM-dd'T'HH:mm:ss" 형식
+        val localDateTime = LocalDate.parse(date, formatter)
+
+
+        return retoCheckRepository.save(
             RetoCheckEntity(
                 author = userRepository.findByIdOrNull(user)!!,
-                retoDate = LocalDate.now(),
+                retoDate = localDateTime,
             )
         )
+    }
 
     fun getMyDate(id: Long): List<ItIsRetoCheckThatTheKotlinModernStyleOfValueClassIWantUseThisClassAOneTimeGood> =
         retoCheckRepository.getAllRetoCheckEntityByAuthorOrIdNull(
