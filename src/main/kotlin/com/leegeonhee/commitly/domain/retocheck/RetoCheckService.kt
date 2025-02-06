@@ -9,22 +9,30 @@ import com.leegeonhee.commitly.gloabl.exception.CustomException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
 class RetoCheckService(
     private val retoCheckRepository: RetoCheckRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
 
-    fun saveRetoDate(user: UserEntity, date: LocalDateTime) {
+    fun saveRetoDate(user: Long, date: LocalDate) =
         retoCheckRepository.save(
             RetoCheckEntity(
-                author = user,
+                author = userRepository.findByIdOrNull(user)!!,
                 retoDate = date,
             )
         )
 
-    }
+    fun getMyDate(id: Long): List<RetoCheckEntity> =
+        retoCheckRepository.getAllRetoCheckEntityByAuthorOrIdNull(
+            userRepository.findByIdOrNull(id) ?: throw CustomException(HttpStatus.NOT_FOUND, "없다는 뜻")
+        ) ?: throw CustomException(
+            status = HttpStatus.NOT_FOUND,
+            message = "404 Not Found 라는 뜻"
+        )
+
 
 }

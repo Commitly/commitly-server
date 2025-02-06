@@ -1,5 +1,7 @@
 package com.leegeonhee.commitly.domain.retocheck.model
 
+import java.time.LocalDate
+
 data class RetoCheckRequestBody(
-    val message: String
+    val date: LocalDate
 )
