@@ -48,11 +48,9 @@ class GitHubService(
     fun getCommitMessages(userId: Long, date: LocalDate): BaseResponse<List<CommitInfo>> {
         val username =
             userRepository.findById(userId).get().login
-        println("안녕하세혁 $date")
 
         val duplicationChecker = getFromDB(username, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {
-            println("좋은거 찾음")
             return BaseResponse(
                 status = 200,
                 message = "잘 찾음",
@@ -65,7 +63,6 @@ class GitHubService(
                 }
             )
         }
-        println("ㅇㅇㅇ: $username")
         val fromDate = date.atStartOfDay()
         val toDate = date.atTime(LocalTime.MAX)
         val query = """
@@ -98,7 +95,6 @@ class GitHubService(
               }
             }
             """.trimIndent()
-
         val response = webClient.post()
             .bodyValue(mapOf("query" to query))
             .retrieve()
