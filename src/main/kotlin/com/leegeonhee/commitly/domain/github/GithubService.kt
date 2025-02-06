@@ -30,6 +30,7 @@ class GitHubService(
     private val jwtUtils: JwtUtils,
     private val retoCheckService: RetoCheckService
 ) {
+    
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
         val commit = githubRepository.findByUserNameAndDay(name, date)
         return if (commit.isNotEmpty()) {
