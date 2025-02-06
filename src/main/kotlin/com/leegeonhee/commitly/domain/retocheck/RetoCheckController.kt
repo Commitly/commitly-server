@@ -22,6 +22,6 @@ class RetoCheckController(
     @PostMapping("post")
     fun isMeanPost(
         @GetAuthenticatedId id: Long,
-        @RequestBody requestBody: RetoCheckRequestBody
-    ) = retoCheckService.saveRetoDate(id,requestBody.date)
+        @RequestBody requestBody: String
+    ) = retoCheckService.saveRetoDate(id,requestBody)
 }
