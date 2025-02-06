@@ -1,5 +1,3 @@
-import java.time.LocalDate
-
 data class GitHubResponse(
     val data: Data
 )
