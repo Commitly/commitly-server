@@ -19,5 +19,5 @@ class RetoCheckEntity(
     @Column(name = "reto_date", nullable = false)
     val retoDate: LocalDate,
     @CreatedDate
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: LocalDate = LocalDate.now(),
 )
