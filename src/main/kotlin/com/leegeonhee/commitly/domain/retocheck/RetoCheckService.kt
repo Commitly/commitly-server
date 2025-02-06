@@ -15,11 +15,11 @@ class RetoCheckService(
     private val userRepository: UserRepository,
 ) {
 
-    fun saveRetoDate(user: Long, date: LocalDate) =
+    fun saveRetoDate(user: Long, date: String) =
         retoCheckRepository.save(
             RetoCheckEntity(
                 author = userRepository.findByIdOrNull(user)!!,
-                retoDate = date,
+                retoDate = LocalDate.now(),
             )
         )
 

@@ -20,5 +20,5 @@ class CommitInfoEntity(
     val message: String,
 
     @Column(name = "committed_date", nullable = false)
-    val committedDate: LocalDate
+    val committedDate: String
 )

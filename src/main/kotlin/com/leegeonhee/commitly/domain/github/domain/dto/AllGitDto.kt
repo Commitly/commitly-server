@@ -50,7 +50,7 @@ data class History(
 
 data class CommitNode(
     val message: String,
-    val committedDate: LocalDate,
+    val committedDate: String,
     val repository: Repository
 )
 
@@ -61,5 +61,5 @@ data class Repository(
 data class CommitInfo(
     val repositoryName: String,
     val message: String,
-    val committedDate: LocalDate
+    val committedDate: String
 )
