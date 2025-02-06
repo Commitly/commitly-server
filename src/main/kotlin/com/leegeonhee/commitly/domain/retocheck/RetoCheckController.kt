@@ -5,7 +5,7 @@ import com.leegeonhee.commitly.gloabl.common.annotation.GetAuthenticatedId
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/reto")
 class RetoCheckController(private val retoCheckService: RetoCheckService) {
     @PostMapping("/create")
     fun writeRetoCheck(
