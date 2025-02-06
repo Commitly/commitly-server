@@ -20,8 +20,6 @@ class RetoCheckService(
     fun saveRetoDate(user: Long, date: String): RetoCheckEntity {
         val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME // "yyyy-MM-dd'T'HH:mm:ss" 형식
         val localDateTime = LocalDate.parse(date, formatter)
-
-
         return retoCheckRepository.save(
             RetoCheckEntity(
                 author = userRepository.findByIdOrNull(user)!!,
