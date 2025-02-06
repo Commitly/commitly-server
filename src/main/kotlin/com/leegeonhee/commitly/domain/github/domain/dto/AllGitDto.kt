@@ -1,3 +1,5 @@
+import java.time.LocalDate
+
 data class GitHubResponse(
     val data: Data
 )
@@ -48,7 +50,7 @@ data class History(
 
 data class CommitNode(
     val message: String,
-    val committedDate: String,
+    val committedDate: LocalDate,
     val repository: Repository
 )
 
@@ -59,5 +61,5 @@ data class Repository(
 data class CommitInfo(
     val repositoryName: String,
     val message: String,
-    val committedDate: String
+    val committedDate: LocalDate
 )

@@ -9,6 +9,7 @@ import com.leegeonhee.commitly.domain.github.repository.GithubRepository
 import com.leegeonhee.commitly.domain.gpt.GptService
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
+import com.leegeonhee.commitly.domain.retocheck.RetoCheckService
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
 import org.springframework.stereotype.Service
@@ -26,7 +27,8 @@ class GitHubService(
     private val gptService: GptService,
     private val userRepository: UserRepository,
     private val gptResponseRepository: GptResponseRepository,
-    private val jwtUtils: JwtUtils
+    private val jwtUtils: JwtUtils,
+    private val retoCheckService: RetoCheckService
 ) {
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
         val commit = githubRepository.findByUserNameAndDay(name, date)
@@ -123,6 +125,10 @@ class GitHubService(
                         committedDate = it.committedDate
                     )
                 )
+                retoCheckService.saveRetoDate(
+                    user = userId,
+                    date = it.committedDate
+                )
             }
         }
 
@@ -137,6 +143,7 @@ class GitHubService(
                 it.repositoryName.toSet()
             }
             println("dd"+commitTag)
+
             BaseResponse(
                 status = 200,
                 message = "커밋을 성공적으로 조회했습니다.",

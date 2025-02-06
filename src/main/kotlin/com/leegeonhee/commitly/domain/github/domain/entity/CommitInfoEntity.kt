@@ -1,6 +1,7 @@
 package com.leegeonhee.commitly.domain.github.domain.entity
 
 import jakarta.persistence.*
+import java.time.LocalDate
 
 @Entity
 @Table(name = "commit_info")
@@ -19,5 +20,5 @@ class CommitInfoEntity(
     val message: String,
 
     @Column(name = "committed_date", nullable = false)
-    val committedDate: String
+    val committedDate: LocalDate
 )
