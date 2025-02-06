@@ -17,16 +17,20 @@ class RetoCheckService(
     private val userRepository: UserRepository,
 ) {
 
-    fun saveRetoDate(user: Long, date: String): RetoCheckEntity {
-        val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME // "yyyy-MM-dd'T'HH:mm:ss" 형식
-        val localDateTime = LocalDate.parse(date, formatter)
-        return retoCheckRepository.save(
-            RetoCheckEntity(
-                author = userRepository.findByIdOrNull(user)!!,
-                retoDate = localDateTime,
-            )
-        )
+    fun saveRetoDate(userId: Long, date: String): RetoCheckEntity {
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE // "yyyy-MM-dd" 형식
+        val localDate = LocalDate.parse(date, formatter)
+
+        val user = userRepository.findByIdOrNull(userId) ?: throw CustomException(HttpStatus.NOT_FOUND, "사용자 없음")
+
+        val exists = retoCheckRepository.existsByAuthorAndRetoDate(user, localDate)
+        if (exists) {
+            throw CustomException(HttpStatus.CONFLICT, "이미 해당 날짜에 기록이 있습니다.")
+        }
+
+        return retoCheckRepository.save(RetoCheckEntity(author = user, retoDate = localDate))
     }
+
 
     fun getMyDate(id: Long): List<ItIsRetoCheckThatTheKotlinModernStyleOfValueClassIWantUseThisClassAOneTimeGood> =
         retoCheckRepository.getAllRetoCheckEntityByAuthorOrIdNull(
