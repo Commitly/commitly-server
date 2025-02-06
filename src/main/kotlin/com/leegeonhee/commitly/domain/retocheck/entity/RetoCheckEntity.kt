@@ -4,6 +4,7 @@ import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -16,7 +17,7 @@ class RetoCheckEntity(
     @JoinColumn(name = "user_id", nullable = false)
     val author: UserEntity,
     @Column(name = "reto_date", nullable = false)
-    val retoDate: String,
+    val retoDate: LocalDate,
     @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )
