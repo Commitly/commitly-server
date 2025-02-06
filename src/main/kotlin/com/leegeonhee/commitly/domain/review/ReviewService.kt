@@ -1,7 +1,5 @@
 package com.leegeonhee.commitly.domain.review
 
-import com.leegeonhee.commitly.domain.auth.domain.entity.UserEntity
-import com.leegeonhee.commitly.domain.auth.domain.model.user.user.NoResponseUser
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
 import com.leegeonhee.commitly.domain.review.entity.ReviewEntity
 import com.leegeonhee.commitly.domain.review.model.ReviewRequestBody
@@ -26,7 +24,7 @@ class ReviewService(
             data = reviewRepository.save(
                 ReviewEntity(
                     author = user,
-                    message = review.message,
+                    message = review.retoDate,
                 )
             )
         )

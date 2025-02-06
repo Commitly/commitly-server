@@ -95,6 +95,7 @@ class GitHubService(
               }
             }
             """.trimIndent()
+
         val response = webClient.post()
             .bodyValue(mapOf("query" to query))
             .retrieve()

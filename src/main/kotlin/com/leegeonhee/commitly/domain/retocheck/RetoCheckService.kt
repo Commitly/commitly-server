@@ -24,7 +24,7 @@ class RetoCheckService(
             data = retoCheckRepository.save(
                 RetoCheckEntity(
                     author = user,
-                    message = review.message,
+                    retoDate = review.retoDate,
                 )
             )
         )
@@ -40,27 +40,6 @@ class RetoCheckService(
             message = "에러가 안뜰거같은 기분",
             data = usersReview
         )
-    }
-
-    //    D
-    fun deleteReview(userId: Long, reviewId: Long): BaseResponse<RetoCheckEntity> {
-        val user = getUser(userId)
-        val review = retoCheckRepository.findByIdOrNull(reviewId) ?: throw CustomException(
-            status = HttpStatus.NOT_FOUND,
-            message = "없"
-        )
-        if (review.author == user) {
-            retoCheckRepository.deleteById(reviewId)
-            return BaseResponse(
-                status = 201,
-                message = "굿",
-            )
-        } else {
-            return BaseResponse(
-                status = 404,
-                message = "NOT FOUND 라는 뜻"
-            )
-        }
     }
 
 

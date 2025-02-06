@@ -15,8 +15,8 @@ class RetoCheckEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val author: UserEntity,
-    @Column
-    val message: String,
+    @Column(name = "reto_date", nullable = false)
+    val retoDate: String,
     @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/reto")
 class RetoCheckController(private val retoCheckService: RetoCheckService) {
+
     @PostMapping("/create")
     fun writeRetoCheck(
         @GetAuthenticatedId id: Long,
@@ -17,11 +18,4 @@ class RetoCheckController(private val retoCheckService: RetoCheckService) {
     fun getMyAllCheck(
         @GetAuthenticatedId id: Long
     ) = retoCheckService.getMyAllReto(id)
-
-
-
-    @DeleteMapping("/delete/{id}")
-    fun deleteCheck(
-        @GetAuthenticatedId userId: Long,
-        @PathVariable id: Long) = retoCheckService.deleteReview(userId,id)
 }

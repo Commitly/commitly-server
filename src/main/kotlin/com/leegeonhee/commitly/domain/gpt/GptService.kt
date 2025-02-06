@@ -31,7 +31,7 @@ class GptService(
     이것은 포트폴리오에 적기 위함이므로 포트폴리오 느낌나게 적어줘
     커밋 메시지 목록: 
         ${message}
-"""
+            """
         )
         val prompt = promptTemplate.create(mapOf("message" to message), requestModel)
         val result = openAiChatModel.call(prompt).result.output.content
