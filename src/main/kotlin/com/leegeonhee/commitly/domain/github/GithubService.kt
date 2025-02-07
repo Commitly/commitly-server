@@ -161,7 +161,11 @@ class GitHubService(
 
         if (commitInfos.isNotEmpty()) {
             commitInfos.forEach {
-                if(it.committedDate.startsWith(date.toString())) return@forEach
+                println(it.committedDate)
+                if(!it.committedDate.startsWith(date.toString())) {
+                    println("이거어거거거")
+                    return@forEach
+                }
                 githubRepository.save(
                     CommitInfoEntity(
                         repositoryName = it.repositoryName,
