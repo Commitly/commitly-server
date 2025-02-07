@@ -15,9 +15,7 @@ import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -66,8 +64,10 @@ class GitHubService(
                 }
             )
         }
-        val fromDate = date.atStartOfDay()
-        val toDate = date.atTime(LocalTime.MAX)
+        val fromDate = date.atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
+        val toDate = date.atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
+
+
         val query = """
             query {
               user(login: "$username") {
