@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -17,18 +18,18 @@ class RetoCheckService(
     private val userRepository: UserRepository,
 ) {
 
-    fun saveRetoDate(userId: Long, date: String): RetoCheckEntity {
-        val formatter = DateTimeFormatter.ISO_LOCAL_DATE // "yyyy-MM-dd" 형식
-        val localDate = LocalDate.parse(date, formatter)
+    fun saveRetoDate(userId: Long, date: String): Boolean {
+        val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+        val localDate = OffsetDateTime.parse(date, formatter).toLocalDate()
 
         val user = userRepository.findByIdOrNull(userId) ?: throw CustomException(HttpStatus.NOT_FOUND, "사용자 없음")
 
         val exists = retoCheckRepository.existsByAuthorAndRetoDate(user, localDate)
         if (exists) {
-            throw CustomException(HttpStatus.CONFLICT, "이미 해당 날짜에 기록이 있습니다.")
+            return  false
         }
-
-        return retoCheckRepository.save(RetoCheckEntity(author = user, retoDate = localDate))
+        retoCheckRepository.save(RetoCheckEntity(author = user, retoDate = localDate))
+        return true
     }
 
 

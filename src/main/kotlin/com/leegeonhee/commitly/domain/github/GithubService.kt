@@ -169,10 +169,10 @@ class GitHubService(
                         committedDate = it.committedDate
                     )
                 )
-//                retoCheckService.saveRetoDate(
-//                    userId = userId,
-//                    date = it.committedDate
-//                )
+                retoCheckService.saveRetoDate(
+                    userId = userId,
+                    date = it.committedDate
+                )
 
             }
         }
