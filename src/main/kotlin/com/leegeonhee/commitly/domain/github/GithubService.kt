@@ -13,6 +13,8 @@ import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
 import com.leegeonhee.commitly.domain.retocheck.RetoCheckService
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.web.SortArgumentResolver
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -27,9 +29,10 @@ class GitHubService(
     private val userRepository: UserRepository,
     private val gptResponseRepository: GptResponseRepository,
     private val jwtUtils: JwtUtils,
-    private val retoCheckService: RetoCheckService
+    private val retoCheckService: RetoCheckService,
+    private val sortArgumentResolver: SortArgumentResolver
 ) {
-    
+
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
         val commit = githubRepository.findByUserNameAndDay(name, date)
         return if (commit.isNotEmpty()) {
@@ -49,14 +52,18 @@ class GitHubService(
 
     fun getCommitMessages(userId: Long, date: LocalDate): CommitBaseResponse<List<CommitInfo>> {
         val username =
-            userRepository.findById(userId).get().login
+            userRepository.findByIdOrNull(userId) ?: return CommitBaseResponse(
+                status = 404,
+                message = "당신을 찾을수가 없어요",
+                tag = emptySet()
+            )
 
-        val duplicationChecker = getFromDB(username, date.toString())
+        val duplicationChecker = getFromDB(username.login, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {
             return CommitBaseResponse(
                 status = 200,
                 message = "잘 찾음",
-                tag =  duplicationChecker.data.map {
+                tag = duplicationChecker.data.map {
                     it.repositoryName
                 }.toSet(),
                 data = duplicationChecker.data.map {
@@ -166,14 +173,14 @@ class GitHubService(
         if (commitInfos.isNotEmpty()) {
             commitInfos.forEach {
                 println(it.committedDate)
-                if(!it.committedDate.startsWith(date.toString())) {
+                if (!it.committedDate.startsWith(date.toString())) {
                     println("이거어거거거")
                     return@forEach
                 }
                 githubRepository.save(
                     CommitInfoEntity(
                         repositoryName = it.repositoryName,
-                        userName = username,
+                        userName = username.login,
                         message = it.message,
                         committedDate = it.committedDate
                     )
@@ -197,7 +204,7 @@ class GitHubService(
             val commitTag = commitInfos.map {
                 it.repositoryName
             }.toSet()
-            println("dd"+commitTag)
+            println("dd" + commitTag)
 
             CommitBaseResponse(
                 status = 200,
@@ -209,11 +216,8 @@ class GitHubService(
     }
 
 
-    fun generateMemoirWithGpt(userId: Long, date: LocalDate): BaseResponse<String> {
-        println("Processing userId: $userId for date: $date")
-//        val login = userRepository.findById(userId).get().login
+    fun generateMemoirWithGpt(userId: Long, date: LocalDate, repositoryName: String): BaseResponse<String> {
         val userCommit = getCommitMessages(userId, date)
-
         if (userCommit.data.isNullOrEmpty()) {
             return BaseResponse(
                 status = 404,
@@ -222,12 +226,19 @@ class GitHubService(
             )
         }
 
-        val response = gptService.askToGptRequest(userCommit.data.toString())
+        val realSlimUserCommit = userCommit.data.filter {
+            it.repositoryName.startsWith(repositoryName)
+        }
+        println(realSlimUserCommit)
+
+        val response =
+            if (repositoryName == "ALL") gptService.askToGptRequest(userCommit.data.toString()) else gptService.askToGptRequest(
+                realSlimUserCommit.toString()
+            )
+
         val user = userRepository.findById(userId).orElseThrow {
             IllegalStateException("User not found with id: $userId")
         }
-
-        println(response)
 
         gptResponseRepository.save(
             GptResponseEntity(

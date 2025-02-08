@@ -48,15 +48,13 @@ class GitHubController(
     @GetMapping("/gpt/make")
     fun getMakeCommitMessages(
         @GetAuthenticatedId userId: Long,
-        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String,
+        @RequestParam(
+            value = "repositoryName",
+            defaultValue = "ALL"
+        ) repositoryName: String
     ): ResponseEntity<BaseResponse<String>> {
-//        if (!rateLimitService.isRequestAllowed(userId)) {
-//            return ResponseEntity.status(429).body(BaseResponse(
-//                status = 401,
-//                message = "당신은 무료 요금제라서 하루에 다섯번 밖에 못함",
-//            ))
-//        }
-        val response = gitHubService.generateMemoirWithGpt(userId, LocalDate.parse(date))
+        val response = gitHubService.generateMemoirWithGpt(userId, LocalDate.parse(date),repositoryName)
         return ResponseEntity.ok(response)
     }
 
