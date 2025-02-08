@@ -1,6 +1,7 @@
 package com.leegeonhee.commitly.domain.github
 
 import CommitInfo
+import com.leegeonhee.commitly.domain.github.domain.dto.CommitBaseResponse
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.common.annotation.GetAuthenticatedId
 //import com.leegeonhee.commitly.gloabl.util.RateLimitService
@@ -21,7 +22,7 @@ class GitHubController(
     fun getCommitMessages(
         @GetAuthenticatedId userId: Long,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: String
-    ): BaseResponse<List<CommitInfo>> {
+    ): CommitBaseResponse<List<CommitInfo>> {
         val targetDate = LocalDate.parse(date)
         return gitHubService.getCommitMessages(userId, targetDate)
     }

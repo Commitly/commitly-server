@@ -4,6 +4,7 @@ import CommitInfo
 import GitHubResponse
 import com.leegeonhee.commitly.domain.auth.domain.model.LiteGptGetDb
 import com.leegeonhee.commitly.domain.auth.domain.repository.UserRepository
+import com.leegeonhee.commitly.domain.github.domain.dto.CommitBaseResponse
 import com.leegeonhee.commitly.domain.github.domain.entity.CommitInfoEntity
 import com.leegeonhee.commitly.domain.github.repository.GithubRepository
 import com.leegeonhee.commitly.domain.gpt.GptService
@@ -46,15 +47,18 @@ class GitHubService(
         }
     }
 
-    fun getCommitMessages(userId: Long, date: LocalDate): BaseResponse<List<CommitInfo>> {
+    fun getCommitMessages(userId: Long, date: LocalDate): CommitBaseResponse<List<CommitInfo>> {
         val username =
             userRepository.findById(userId).get().login
 
         val duplicationChecker = getFromDB(username, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {
-            return BaseResponse(
+            return CommitBaseResponse(
                 status = 200,
                 message = "잘 찾음",
+                tag =  duplicationChecker.data.map {
+                    it.repositoryName
+                }.toSet(),
                 data = duplicationChecker.data.map {
                     CommitInfo(
                         repositoryName = it.repositoryName,
@@ -183,20 +187,22 @@ class GitHubService(
         }
 
         return if (commitInfos.isEmpty()) {
-            BaseResponse(
+            CommitBaseResponse(
                 status = 404,
                 message = "커밋을 찾을 수 없습니다ddddd.",
+                tag = emptySet(),
                 data = emptyList()
             )
         } else {
             val commitTag = commitInfos.map {
-                it.repositoryName.toSet()
-            }
+                it.repositoryName
+            }.toSet()
             println("dd"+commitTag)
 
-            BaseResponse(
+            CommitBaseResponse(
                 status = 200,
                 message = "커밋을 성공적으로 조회했습니다.",
+                tag = commitTag,
                 data = commitInfos
             )
         }
