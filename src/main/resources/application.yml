@@ -28,10 +28,10 @@ spring:
     hibernate:
 
       ddl-auto: update
-    show_sql: true
+#    show_sql: true
     properties:
       hibernate:
-        show_sql: true
+#        show_sql: true
         format_sql: true
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
 jwt:

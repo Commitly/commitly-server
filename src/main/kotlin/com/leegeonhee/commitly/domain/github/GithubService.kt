@@ -57,6 +57,7 @@ class GitHubService(
                 message = "당신을 찾을수가 없어요",
                 tag = emptySet()
             )
+        println(username)
 
         val duplicationChecker = getFromDB(username.login, date.toString())
         if (!duplicationChecker.data.isNullOrEmpty()) {
@@ -78,10 +79,9 @@ class GitHubService(
         val fromDate = date.atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
         val toDate = date.atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
 
-
         val query = """
             query {
-              user(login: "$username") {
+              user(login: "${username.login}") {
                 repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
                   nodes {
                     name
@@ -157,8 +157,11 @@ class GitHubService(
             .bodyValue(mapOf("query" to query))
             .retrieve()
             .bodyToMono<GitHubResponse>()
+            .doOnError { e ->
+                println("API 요청 실패: ${e.message}")
+            }
             .block()
-
+        println("ㅎㅇㅎㅁㅎㅁㅎㅇㅁㅎㅇㄴ$response")
 
         val commitInfos = response?.data?.user?.repositories?.nodes?.flatMap { repo ->
             repo.defaultBranchRef?.target?.history?.nodes?.map { commit ->
