@@ -25,7 +25,7 @@ class GptService(
     fun askToGptRequest(message: String): String {
         val promptTemplate = PromptTemplate(
             """
-    아래 커밋 메시지 목록을 참고하여, 오늘의 회고록을 3줄 내외로 작성해줘.
+    아래 커밋 메시지 목록을 참고하여, 오늘의 회고록을 5줄 내외로 작성해줘.
     이 회고록은 포트폴리오에 사용될 예정이므로 전문적이고 간결한 문체를 사용해야 해.
     
     반드시 다음 사항을 반영할 것:
