@@ -9,5 +9,5 @@ import java.time.LocalDate
 interface RetoCheckRepository : JpaRepository<RetoCheckEntity, Long> {
     fun getAllRetoCheckEntityByAuthorOrIdNull(author: UserEntity): List<RetoCheckEntity>?
     fun existsByAuthorAndRetoDate(author: UserEntity, retoDate: LocalDate): Boolean
-
+    fun findTopByAuthorOrderByRetoDateDesc(author: UserEntity): RetoCheckEntity?
 }

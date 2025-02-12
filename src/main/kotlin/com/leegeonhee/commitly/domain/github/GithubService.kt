@@ -10,6 +10,7 @@ import com.leegeonhee.commitly.domain.github.repository.GithubRepository
 import com.leegeonhee.commitly.domain.gpt.GptService
 import com.leegeonhee.commitly.domain.gpt.domain.entity.GptResponseEntity
 import com.leegeonhee.commitly.domain.gpt.repository.GptResponseRepository
+import com.leegeonhee.commitly.domain.retocheck.RetoCheckRepository
 import com.leegeonhee.commitly.domain.retocheck.RetoCheckService
 import com.leegeonhee.commitly.gloabl.common.BaseResponse
 import com.leegeonhee.commitly.gloabl.jwt.JwtUtils
@@ -30,6 +31,7 @@ class GitHubService(
     private val userRepository: UserRepository,
     private val gptResponseRepository: GptResponseRepository,
     private val retoCheckService: RetoCheckService,
+    private val retoCheckRepository: RetoCheckRepository
 ) {
 
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
@@ -75,6 +77,7 @@ class GitHubService(
                 }
             )
         }
+
         val onlyYearAndMont  =  date.toString().substring(0 until 7)
         val monthIsEmpty = githubRepository.findByUserNameAndDay(username.login,onlyYearAndMont)
 //        println("-afa-fad-fadd-fsad-f-a-fdas")
@@ -84,7 +87,10 @@ class GitHubService(
 //        println(monthIsEmpty.size)
 //        println("-afa-fad-fadd-fsad-f-a-fdas")
 
-        if(monthIsEmpty.isNotEmpty()) {
+
+
+
+        if(monthIsEmpty.isNotEmpty() && !isLatestMonth(date)) {
             return CommitBaseResponse(
                 status = 404,
                 message = "커밋을 찾을 수 없습니다ddddd.",
@@ -92,71 +98,80 @@ class GitHubService(
                 data = emptyList()
             )
         }
+        val latestReto = retoCheckRepository.findTopByAuthorOrderByRetoDateDesc(username)?.retoDate
 
 
-        val firstDay = date.withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
+        val firstDay =  if(latestReto != null && isLatestMonth(date)){
+            latestReto.atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
+        } else {
+            date.withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
+        }
         val lastDay = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
         println(firstDay)
         println(lastDay)
         val query = """
-    query {
-      user(login: "${username.login}") {
-        repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-          nodes {
-            name
-            owner {
-              login
-            }
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(
-                    first: 100,
-                    since: "${firstDay.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                    until: "${lastDay.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                  ) {
-                    nodes {
-                      message
-                      committedDate
-                      author {
-                        user {
-                          login
-                        }
-                      }
-                      repository {
-                        name
-                      }
+            query {
+              user(login: "${username.login}") {
+                repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+                  nodes {
+                    name
+                    owner {
+                      login
                     }
-                  }
-                }
-              }
-            }
-          }
-        }
-        organizations(first: 10) {
-          nodes {
-            login
-            repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-              nodes {
-                name
-                defaultBranchRef {
-                  target {
-                    ... on Commit {
-                      history(
-                        first: 100,
-                        since: "${firstDay.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                        until: "${lastDay.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                      ) {
-                        nodes {
-                          message
-                          committedDate
-                          author {
-                            user {
-                              login
+                    defaultBranchRef {
+                      target {
+                        ... on Commit {
+                          history(
+                            first: 100,
+                            since: "${firstDay.format(DateTimeFormatter.ISO_DATE_TIME)}",
+                            until: "${lastDay.format(DateTimeFormatter.ISO_DATE_TIME)}"
+                          ) {
+                            nodes {
+                              message
+                              committedDate
+                              author {
+                                user {
+                                  login
+                                }
+                              }
+                              repository {
+                                name
+                              }
                             }
                           }
-                          repository {
-                            name
+                        }
+                      }
+                    }
+                  }
+                }
+                organizations(first: 10) {
+                  nodes {
+                    login
+                    repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+                      nodes {
+                        name
+                        defaultBranchRef {
+                          target {
+                            ... on Commit {
+                              history(
+                                first: 100,
+                                since: "${firstDay.format(DateTimeFormatter.ISO_DATE_TIME)}",
+                                until: "${lastDay.format(DateTimeFormatter.ISO_DATE_TIME)}"
+                              ) {
+                                nodes {
+                                  message
+                                  committedDate
+                                  author {
+                                    user {
+                                      login
+                                    }
+                                  }
+                                  repository {
+                                    name
+                                  }
+                                }
+                              }
+                            }
                           }
                         }
                       }
@@ -165,11 +180,7 @@ class GitHubService(
                 }
               }
             }
-          }
-        }
-      }
-    }
-""".trimIndent()
+        """.trimIndent()
 
 
         val response = webClient.post()
@@ -281,5 +292,10 @@ class GitHubService(
             },
             message = "굿"
         )
+    }
+
+    private fun isLatestMonth(data: LocalDate): Boolean {
+        val today = LocalDate.now()
+        return data.year == today.year && data.month == today.month
     }
 }
