@@ -28,9 +28,7 @@ class GitHubService(
     private val gptService: GptService,
     private val userRepository: UserRepository,
     private val gptResponseRepository: GptResponseRepository,
-    private val jwtUtils: JwtUtils,
     private val retoCheckService: RetoCheckService,
-    private val sortArgumentResolver: SortArgumentResolver
 ) {
 
     fun getFromDB(name: String, date: String): BaseResponse<List<CommitInfoEntity>> {
@@ -76,6 +74,7 @@ class GitHubService(
                 }
             )
         }
+
         val firstDay = date.withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
         val lastDay = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
         println(firstDay)
@@ -176,7 +175,6 @@ class GitHubService(
 
         if (commitInfos.isNotEmpty()) {
             commitInfos.forEach {
-                println(it.committedDate)
 //                if (!it.committedDate.startsWith(date.toString())) {
 //                    return@forEach
 //                }
