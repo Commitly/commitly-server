@@ -8,5 +8,4 @@ import org.springframework.data.repository.query.Param
 interface GithubRepository : JpaRepository<CommitInfoEntity, Long> {
     @Query(value = "SELECT * FROM commit_info WHERE user_name = :userName AND committed_date LIKE :day%", nativeQuery = true)
     fun findByUserNameAndDay(@Param("userName") userName: String, @Param("day") day: String): List<CommitInfoEntity>
-
 }

@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import java.time.*
 import java.time.format.DateTimeFormatter
+import kotlin.reflect.typeOf
 
 @Service
 class GitHubService(
@@ -74,6 +75,24 @@ class GitHubService(
                 }
             )
         }
+        val onlyYearAndMont  =  date.toString().substring(0 until 7)
+        val monthIsEmpty = githubRepository.findByUserNameAndDay(username.login,onlyYearAndMont)
+//        println("-afa-fad-fadd-fsad-f-a-fdas")
+//        monthIsEmpty.forEach{
+//            println(it.message)
+//        }
+//        println(monthIsEmpty.size)
+//        println("-afa-fad-fadd-fsad-f-a-fdas")
+
+        if(monthIsEmpty.isNotEmpty()) {
+            return CommitBaseResponse(
+                status = 404,
+                message = "커밋을 찾을 수 없습니다ddddd.",
+                tag = emptySet(),
+                data = emptyList()
+            )
+        }
+
 
         val firstDay = date.withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
         val lastDay = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
