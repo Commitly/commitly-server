@@ -76,72 +76,69 @@ class GitHubService(
                 }
             )
         }
-        val fromDate = date.atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
-        val toDate = date.atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
-
+        val firstDay = date.withDayOfMonth(1).atStartOfDay().atOffset(ZoneOffset.of("+09:00"))
+        val lastDay = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX).atOffset(ZoneOffset.of("+09:00"))
+        println(firstDay)
+        println(lastDay)
         val query = """
-            query {
-              user(login: "${username.login}") {
-                repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-                  nodes {
-                    name
-                    owner {
-                      login
-                    }
-                    defaultBranchRef {
-                      target {
-                        ... on Commit {
-                          history(
-                            first: 100,
-                            since: "${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                            until: "${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                          ) {
-                            nodes {
-                              message
-                              committedDate
-                              author {
-                                user {
-                                  login
-                                }
-                              }
-                              repository {
-                                name
-                              }
-                            }
-                          }
+    query {
+      user(login: "${username.login}") {
+        repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+          nodes {
+            name
+            owner {
+              login
+            }
+            defaultBranchRef {
+              target {
+                ... on Commit {
+                  history(
+                    first: 100,
+                    since: "${firstDay.format(DateTimeFormatter.ISO_DATE_TIME)}",
+                    until: "${lastDay.format(DateTimeFormatter.ISO_DATE_TIME)}"
+                  ) {
+                    nodes {
+                      message
+                      committedDate
+                      author {
+                        user {
+                          login
                         }
+                      }
+                      repository {
+                        name
                       }
                     }
                   }
                 }
-                organizations(first: 10) {
-                  nodes {
-                    login
-                    repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
-                      nodes {
-                        name
-                        defaultBranchRef {
-                          target {
-                            ... on Commit {
-                              history(
-                                first: 100,
-                                since: "${fromDate.format(DateTimeFormatter.ISO_DATE_TIME)}",
-                                until: "${toDate.format(DateTimeFormatter.ISO_DATE_TIME)}"
-                              ) {
-                                nodes {
-                                  message
-                                  committedDate
-                                  author {
-                                    user {
-                                      login
-                                    }
-                                  }
-                                  repository {
-                                    name
-                                  }
-                                }
-                              }
+              }
+            }
+          }
+        }
+        organizations(first: 10) {
+          nodes {
+            login
+            repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
+              nodes {
+                name
+                defaultBranchRef {
+                  target {
+                    ... on Commit {
+                      history(
+                        first: 100,
+                        since: "${firstDay.format(DateTimeFormatter.ISO_DATE_TIME)}",
+                        until: "${lastDay.format(DateTimeFormatter.ISO_DATE_TIME)}"
+                      ) {
+                        nodes {
+                          message
+                          committedDate
+                          author {
+                            user {
+                              login
                             }
+                          }
+                          repository {
+                            name
                           }
                         }
                       }
@@ -150,7 +147,11 @@ class GitHubService(
                 }
               }
             }
-        """.trimIndent()
+          }
+        }
+      }
+    }
+""".trimIndent()
 
 
         val response = webClient.post()
@@ -176,10 +177,9 @@ class GitHubService(
         if (commitInfos.isNotEmpty()) {
             commitInfos.forEach {
                 println(it.committedDate)
-                if (!it.committedDate.startsWith(date.toString())) {
-                    println("이거어거거거")
-                    return@forEach
-                }
+//                if (!it.committedDate.startsWith(date.toString())) {
+//                    return@forEach
+//                }
                 githubRepository.save(
                     CommitInfoEntity(
                         repositoryName = it.repositoryName,
@@ -192,30 +192,26 @@ class GitHubService(
                     userId = userId,
                     date = it.committedDate
                 )
-
             }
         }
-
-        return if (commitInfos.isEmpty()) {
-            CommitBaseResponse(
-                status = 404,
-                message = "커밋을 찾을 수 없습니다ddddd.",
-                tag = emptySet(),
-                data = emptyList()
-            )
-        } else {
-            val commitTag = commitInfos.map {
+        val responseCommit = getFromDB(name = username.login, date.toString())
+        if (!responseCommit.data.isNullOrEmpty()) {
+            val commitTag = responseCommit.data.map {
                 it.repositoryName
             }.toSet()
-            println("dd" + commitTag)
-
-            CommitBaseResponse(
+            return CommitBaseResponse(
                 status = 200,
                 message = "커밋을 성공적으로 조회했습니다.",
                 tag = commitTag,
                 data = commitInfos
             )
         }
+        return CommitBaseResponse(
+            status = 404,
+            message = "커밋을 찾을 수 없습니다ddddd.",
+            tag = emptySet(),
+            data = emptyList()
+        )
     }
 
 
@@ -232,8 +228,6 @@ class GitHubService(
         val realSlimUserCommit = userCommit.data.filter {
             it.repositoryName.startsWith(repositoryName)
         }
-        println(realSlimUserCommit)
-
         val response =
             if (repositoryName == "ALL") gptService.askToGptRequest(userCommit.data.toString()) else gptService.askToGptRequest(
                 realSlimUserCommit.toString()
