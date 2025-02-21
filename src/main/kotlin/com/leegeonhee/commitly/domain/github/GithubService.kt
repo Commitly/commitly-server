@@ -191,7 +191,6 @@ class GitHubService(
                 println("API 요청 실패: ${e.message}")
             }
             .block()
-        println("ㅎㅇㅎㅁㅎㅁㅎㅇㅁㅎㅇㄴ$response")
 
         val commitInfos = response?.data?.user?.repositories?.nodes?.flatMap { repo ->
             repo.defaultBranchRef?.target?.history?.nodes?.map { commit ->

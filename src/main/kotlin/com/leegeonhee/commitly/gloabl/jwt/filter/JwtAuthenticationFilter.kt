@@ -62,7 +62,6 @@ class JwtAuthenticationFilter(
             when (jwtUtils.checkTokenInfo(jwtUtils.getToken(token))) {
                 JwtErrorType.OK -> {
                     SecurityContextHolder.getContext().authentication = jwtUtils.getAuthentication(token)
-                    println(SecurityContextHolder.getContext().authentication)
                     doFilter(request, response, filterChain)
                 }
 

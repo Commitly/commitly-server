@@ -24,7 +24,6 @@ class GithubOAuth2Client(
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         val request = HttpEntity(body, headers)
-        println(request)
         return  restTemplate.postForEntity(
             "https://github.com/login/oauth/access_token",request,OAuthTokensResponse::class.java
         ).body
